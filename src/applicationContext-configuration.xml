@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
+    
+	<context:component-scan base-package="com.mss.shtoone"/>
+	
+	<aop:aspectj-autoproxy />
+    
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	
+	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager" >
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+    
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean" >	
+		<property name="configLocation" value="classpath:hibernate.cfg.xml" />
+	</bean>
+
+	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate" >
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	
+
+    <security:http access-denied-page="/403.jsp"><!-- 当访问被拒绝时，会转到403.jsp -->
+        <security:intercept-url pattern="/login.jsp" filters="none" />               
+        <security:form-login login-page="/login.jsp"
+            authentication-failure-url="/login.jsp?error=true"      
+            default-target-url="/main/login"       
+           />
+        <security:http-basic />
+        <security:logout invalidate-session="true" logout-success-url="/login.jsp" />
+        <!-- 增加一个filter，这点与Acegi是不一样的，不能修改默认的filter了，这个filter位于FILTER_SECURITY_INTERCEPTOR之前 -->
+        <security:custom-filter before="FILTER_SECURITY_INTERCEPTOR"
+            ref="myFilter" />
+    </security:http>
+    
+    <!-- 一个自定义的filter，必须包含authenticationManager,accessDecisionManager,securityMetadataSource三个属性，
+    我们的所有控制将在这三个类中实现，解释详见具体配置 -->
+    <bean id="myFilter" class="com.mss.shtoone.security.MyFilterSecurityInterceptor">
+        <property name="authenticationManager"
+            ref="authenticationManager" />
+        <property name="accessDecisionManager"
+            ref="myAccessDecisionManager" />
+        <property name="securityMetadataSource"
+            ref="securityMetadataSource" />
+    </bean>
+    
+    <!-- 认证管理器，实现用户认证的入口，主要实现UserDetailsService接口即可 -->
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider
+            user-service-ref="myUserDetailService">
+            <!--   如果用户的密码采用加密的话，可以加点“盐”
+                <password-encoder hash="md5" />
+            -->
+        </security:authentication-provider>
+    </security:authentication-manager>
+    
+    <bean id="myUserDetailService"
+        class="com.mss.shtoone.security.MyUserDetailService">        
+    </bean>
+
+    <!-- 访问决策器，决定某个用户具有的角色，是否有足够的权限去访问某个资源 -->
+    <bean id="myAccessDecisionManager"
+        class="com.mss.shtoone.security.MyAccessDecisionManager">
+    </bean>
+    
+    <!-- 资源源数据定义，即定义某一资源可以被哪些角色访问 -->
+    <bean id="securityMetadataSource"
+        class="com.mss.shtoone.security.MyInvocationSecurityMetadataSource">  
+    </bean>	
+</beans>

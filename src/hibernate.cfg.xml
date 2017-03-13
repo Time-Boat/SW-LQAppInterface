@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+		<property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>
+		<property name="hibernate.connection.driver_class">net.sourceforge.jtds.jdbc.Driver</property>
+		<property name="hibernate.connection.url">jdbc:jtds:sqlserver://127.0.0.1:1433;instance=MSSQLSERVER;DatabaseName=gdnhmss;tds=8.0;lastupdatecount=true</property>
+		<property name="hibernate.connection.username">sa</property>
+		<property name="hibernate.connection.password">123456</property>
+<!-- 		<property name="hibernate.hbm2ddl.auto">update</property> -->
+		<property name="hibernate.show_sql">false</property>
+		<property name="hibernate.format_sql">true</property>
+		<property name="hibernate.current_session_context_class">thread</property>
+		
+
+		<!-- 最大连接数 -->
+		<property name="hibernate.c3p0.max_size">20</property>
+        <!-- 最小连接数 -->
+		<property name="hibernate.c3p0.min_size">5</property>
+        <!-- 获得连接的超时时间,如果超过这个时间,会抛出异常，单位毫秒 -->
+		<property name="hibernate.c3p0.timeout">120</property>
+        <!-- 最大的PreparedStatement的数量 -->
+		<property name="hibernate.c3p0.max_statements">100</property>
+        <!-- 每隔120秒检查连接池里的空闲连接 ，单位是秒-->
+		<property name="hibernate.c3p0.idle_test_period">120</property>
+        <!-- 当连接池里面的连接用完的时候，C3P0一下获取的新的连接数 -->
+		<property name="hibernate.c3p0.acquire_increment">2</property>
+        <!-- 每次都验证连接是否可用 -->
+		<property name="hibernate.c3p0.validate">true</property>
+
+		<mapping class="com.mss.shtoone.domain.Muser" />
+		<mapping class="com.mss.shtoone.domain.Cinstru" />
+		<mapping class="com.mss.shtoone.domain.Mpressure" />
+		<mapping class="com.mss.shtoone.domain.Mtemperature" />
+		<mapping class="com.mss.shtoone.domain.Role" />
+		<mapping class="com.mss.shtoone.domain.Resource" />
+		<mapping class="com.mss.shtoone.domain.Banhezhanxinxi" />
+		<mapping class="com.mss.shtoone.domain.Sessionupdatetime" />
+		<mapping class="com.mss.shtoone.domain.HandSet" />
+		<mapping class="com.mss.shtoone.domain.Smsinfo" />
+		<mapping class="com.mss.shtoone.domain.Biaoduanxinxi" />
+		<mapping class="com.mss.shtoone.domain.Xiangmubuxinxi" />
+		<mapping class="com.mss.shtoone.domain.Xiangxixx" />
+		<mapping class="com.mss.shtoone.domain.Xiangxixxsms" />
+		<mapping class="com.mss.shtoone.domain.Usertypexinxi" />
+		<mapping class="com.mss.shtoone.domain.Diuqishuju" />
+		<mapping class="com.mss.shtoone.domain.Zuoyeduixinxi" />
+		<mapping class="com.mss.shtoone.domain.Smsrecord" />
+		<mapping class="com.mss.shtoone.domain.Smsrecharge" />
+		<mapping class="com.mss.shtoone.domain.Liqingxixx" />
+		<mapping class="com.mss.shtoone.domain.Liqingxixxlilun" />
+		<mapping class="com.mss.shtoone.domain.Liqingxixxmax" />
+		<mapping class="com.mss.shtoone.domain.Liqingziduancfg" />
+		<mapping class="com.mss.shtoone.domain.LiqingView" />
+		<mapping class="com.mss.shtoone.domain.LiqingziduancfgView" />
+		<mapping class="com.mss.shtoone.domain.TopLiqingView" />
+		<mapping class="com.mss.shtoone.domain.TopRealMaxLiqingView" />
+		<mapping class="com.mss.shtoone.domain.LiqingphbView" />
+		<mapping class="com.mss.shtoone.domain.LiqingmanualphbView" />
+		<mapping class="com.mss.shtoone.domain.Liqingxixxjieguo" />
+		<mapping class="com.mss.shtoone.domain.Liqingxixxdanjia" />
+		<mapping class="com.mss.shtoone.domain.LiqingclDaily" />
+		<mapping class="com.mss.shtoone.domain.LiqingclDailyView" />
+		<mapping class="com.mss.shtoone.domain.XCData1" />
+		<mapping class="com.mss.shtoone.domain.TopRealSpeeddataView" />
+		<mapping class="com.mss.shtoone.domain.TopRealTemperaturedataView" />
+		<mapping class="com.mss.shtoone.domain.TopRealTjjdataView" />
+		<mapping class="com.mss.shtoone.domain.Gpsdata" />
+		<mapping class="com.mss.shtoone.domain.GpsdataView" />
+		<mapping class="com.mss.shtoone.domain.TopRealGpsdataView" />
+		<mapping class="com.mss.shtoone.domain.Yandudata" />
+		<mapping class="com.mss.shtoone.domain.Wendingdudata" />
+		<mapping class="com.mss.shtoone.domain.T_YanDu" />
+		<mapping class="com.mss.shtoone.domain.Xcsmscfg" />
+		<mapping class="com.mss.shtoone.domain.SpeeddataView" />
+		<mapping class="com.mss.shtoone.domain.TemperaturedataView" />
+		<mapping class="com.mss.shtoone.domain.TjjdataView" />
+		<mapping class="com.mss.shtoone.domain.Temperaturejieguo" />
+		<mapping class="com.mss.shtoone.domain.Speedjieguo" />
+		<mapping class="com.mss.shtoone.domain.Tanpujihuaxinxi" />
+		<mapping class="com.mss.shtoone.domain.Attachment" />
+		<mapping class="com.mss.shtoone.domain.TopRealMaxShuiwenxixxView" />
+		<mapping class="com.mss.shtoone.domain.ShuiwenxixxView" />
+		<mapping class="com.mss.shtoone.domain.ShuiwenphbView" />
+		<mapping class="com.mss.shtoone.domain.ShuiwenclDaily" />
+		<mapping class="com.mss.shtoone.domain.ShuiwenclDailyView" />
+		<mapping class="com.mss.shtoone.domain.Shuiwenxixxjieguo" />
+		<mapping class="com.mss.shtoone.domain.Shuiwenxixxlilun" />
+		<mapping class="com.mss.shtoone.domain.ShuiwenmanualphbView" />
+		<mapping class="com.mss.shtoone.domain.ShuiwenxixxlilunView" />
+		<mapping class="com.mss.shtoone.domain.Userlog" />
+		<mapping class="com.mss.shtoone.domain.TopRealMaxhunnintuView" />
+		<mapping class="com.mss.shtoone.domain.TopRealEnvironmentView" />
+		<mapping class="com.mss.shtoone.domain.TopRealSpeeddata1View" />
+		<mapping class="com.mss.shtoone.domain.TopRealTemperaturedata1View" />
+		<mapping class="com.mss.shtoone.domain.Temperaturedata"/>
+		<mapping class="com.mss.shtoone.domain.TopRealChuliaokouTemperaturedataView"/>
+		<mapping class="com.mss.shtoone.domain.Clksmscfg"/>
+		<mapping class="com.mss.shtoone.domain.Liqingsclsheji"/>
+		<mapping class="com.mss.shtoone.domain.ShuiwenziduancfgView"/>
+		<mapping class="com.mss.shtoone.domain.Shuiwenziduancfg"/> 
+		<mapping class="com.mss.shtoone.domain.Shuiwenxixxmax"/>
+		<mapping class="com.mss.shtoone.domain.TopShuiwenView"/>
+		<mapping class="com.mss.shtoone.domain.Shuiwenxixxdanjia"/>
+		<mapping class="com.mss.shtoone.domain.ShaifenshiyanView" />
+		<mapping class="com.mss.shtoone.domain.Shaifenshiyan" />
+		<mapping class="com.mss.shtoone.domain.Shaifenjieguo"/>
+		<mapping class="com.mss.shtoone.domain.ShaifenjieguoView"/>
+		<mapping class="com.mss.shtoone.domain.Lqshaifenjieguo"/>
+		<mapping class="com.mss.shtoone.domain.LqshaifenjieguoView"/>
+		<mapping class="com.mss.shtoone.domain.Shuiwentongji"/>
+		<mapping class="com.mss.shtoone.domain.YezhuFile"/>
+		<mapping class="com.mss.shtoone.domain.LiqingxixxlilunView"/>
+		
+		<mapping class="com.mss.shtoone.domain.Lqshaifenshiyan"/>
+		<mapping class="com.mss.shtoone.domain.LqshaifenshiyanView"/>
+		<mapping class="com.mss.shtoone.domain.Lqshaifenjieguo"/>
+		<mapping class="com.mss.shtoone.domain.LqshaifenjieguoView"/>
+		
+		<!-- app接口 -->
+		<mapping class="com.mss.shtoone.app.domain.AppLoginLogEntity"/>
+		
+	</session-factory>
+</hibernate-configuration>
