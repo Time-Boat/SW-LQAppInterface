@@ -1,10 +1,16 @@
 package com.mss.shtoone.app.domain;
 
 public class SWWraningStatisticsEntity {
-
+	
+	private String bsId;
+	
+	public String getBsId() {
+		return bsId;
+	}
+	public void setBsId(String bsId) {
+		this.bsId = bsId;
+	}
 	private String banhezhanminchen;
-	private String biaoDuanId;
-	private String xmbId;
 	//超标等级名称
 	private String remark;
 	
@@ -37,18 +43,6 @@ public class SWWraningStatisticsEntity {
 	}
 	public void setBanhezhanminchen(String banhezhanminchen) {
 		this.banhezhanminchen = banhezhanminchen;
-	}
-	public String getBiaoDuanId() {
-		return biaoDuanId;
-	}
-	public void setBiaoDuanId(String biaoDuanId) {
-		this.biaoDuanId = biaoDuanId;
-	}
-	public String getXmbId() {
-		return xmbId;
-	}
-	public void setXmbId(String xmbId) {
-		this.xmbId = xmbId;
 	}
 	public String getBhzCount() {
 		return bhzCount;

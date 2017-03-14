@@ -9,6 +9,7 @@ public class BhzInfoEntity {
 	private String jianchen;
 	private String biaoduanid;
 	private String xiangmubuid;
+	
 	public String getId() {
 		return id;
 	}

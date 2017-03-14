@@ -16,6 +16,7 @@ import com.mss.shtoone.app.persistence.AppDAO;
 import com.mss.shtoone.domain.Banhezhanxinxi;
 import com.mss.shtoone.domain.Biaoduanxinxi;
 import com.mss.shtoone.domain.GenericPageMode;
+import com.mss.shtoone.domain.ShuiwenphbView;
 import com.mss.shtoone.domain.ShuiwenxixxView;
 import com.mss.shtoone.domain.ShuiwenziduancfgView;
 import com.mss.shtoone.domain.Xiangmubuxinxi;
@@ -25,6 +26,7 @@ import com.mss.shtoone.persistence.ShuiwenmanualphbViewDAO;
 import com.mss.shtoone.persistence.ShuiwenxixxViewDAO;
 import com.mss.shtoone.persistence.XiangmubuDAO;
 import com.mss.shtoone.service.QueryService;
+import com.mss.shtoone.service.SwViewService;
 import com.mss.shtoone.util.StringUtil;
 
 import antlr.StringUtils;
@@ -51,11 +53,18 @@ public class AppServiceHibernateDAO {
 	@Autowired
 	private ShuiwenmanualphbViewDAO swmanualphbViewDao;
 
+	@Autowired
+	private SwViewService swService;
+	
 	// 获取拌合站设备
 	public List<Banhezhanxinxi> getMachine(String fn, String id, String leixing) {
 		String queryString = "";
 		if (StringUtil.Null2Blank(leixing).length() > 0) {
-			queryString = "from Banhezhanxinxi as model where model.shebeileixin='" + leixing + "' and model." + fn + "='" + id + "' ";
+			if ("all".equals(fn)) {
+				queryString = "from Banhezhanxinxi as model where model.shebeileixin='" + leixing + "' ";
+			} else {
+				queryString = "from Banhezhanxinxi as model where model.shebeileixin='" + leixing + "' and model." + fn + "='" + id + "' ";
+			}
 		}
 		return bhzDAO.find(queryString);
 	}
@@ -105,7 +114,8 @@ public class AppServiceHibernateDAO {
 
 	public List<Banhezhanxinxi> getBhzByXmb(String xmbId) {
 		if (StringUtil.isNumeric(xmbId)) {
-			String queryString = "from Banhezhanxinxi as model where model.xiangmubuid in(" + xmbId + ") and shebeileixin = 6 ";
+			String queryString = "from Banhezhanxinxi as model where model.xiangmubuid in(" + xmbId
+					+ ") and shebeileixin = 6 ";
 			return bhzDAO.find(queryString);
 		}
 		return null;
@@ -138,18 +148,43 @@ public class AppServiceHibernateDAO {
 				fn, bsid, offset, pagesize, chaobiaolx, swisshow, cllx, bianhao);
 	}
 
+	// 水稳材料统计
+	public ShuiwenphbView swmateriallist(String startTime,String endTime,String shebeibianhao, Integer biaoduan, 
+			Integer xiangmubu, String fn, int bsid){
+		return swmanualphbViewDao.swmateriallist(startTime, endTime, shebeibianhao,biaoduan,xiangmubu,fn,bsid);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	// 沥青接口-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	// 沥青预警统计查询
-	public List<AppInterfaceChaobiaoEntity> lqsmstongji(String startTime, String endTime, Integer biaoduan,
-			Integer xiangmubu, String shebeibianhao, String fn, Integer bsid, Integer fzlx) {
-		return appDAO.lqsmstongji(startTime, endTime, biaoduan, xiangmubu, shebeibianhao, fn, bsid, fzlx);
-	}
-
-	// 沥青获取被处置的数据条数
-	public Map<String, String> getLqCbcz(String startTime, String endTime, Integer biaoduan, Integer xiangmubu) {
-		return appDAO.getLqCbcz(startTime, endTime, biaoduan, xiangmubu);
-	}
+//	public List<AppInterfaceChaobiaoEntity> lqsmstongji(String startTime, String endTime, Integer biaoduan,
+//			Integer xiangmubu, String shebeibianhao, String fn, Integer bsid, Integer fzlx) {
+//		return appDAO.lqsmstongji(startTime, endTime, biaoduan, xiangmubu, shebeibianhao, fn, bsid, fzlx);
+//	}
+//
+//	// 沥青获取被处置的数据条数
+//	public Map<String, String> getLqCbcz(String startTime, String endTime, Integer biaoduan, Integer xiangmubu) {
+//		return appDAO.getLqCbcz(startTime, endTime, biaoduan, xiangmubu);
+//	}
 
 	// public void departTree(List list, String fn, String biaoshiid) {
 	// appDAO.departTree(list, fn, biaoshiid);

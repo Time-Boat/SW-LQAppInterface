@@ -14,10 +14,10 @@ public interface AppDAO extends GenericDAO<AppLoginLogEntity, Integer>{
 	
 	public Map<String,String> getCbcz(String startTime, String endTime, Integer biaoduan, Integer xiangmubu, String shebeibianhao);
 	
-	public Map<String,String> getLqCbcz(String startTime, String endTime, Integer biaoduan, Integer xiangmubu);
+//	public Map<String,String> getLqCbcz(String startTime, String endTime, Integer biaoduan, Integer xiangmubu);
 	
-	public List<AppInterfaceChaobiaoEntity> lqsmstongji(String startTime,String endTime,Integer biaoduan,Integer xiangmubu,String shebeibianhao,
-			String fn,Integer bsid,Integer fzlx);
+//	public List<AppInterfaceChaobiaoEntity> lqsmstongji(String startTime,String endTime,Integer biaoduan,Integer xiangmubu,String shebeibianhao,
+//			String fn,Integer bsid,Integer fzlx);
 
 //	public void departTree(List list, String queryFieldNameByUserType, String biaoshiid);
 }
