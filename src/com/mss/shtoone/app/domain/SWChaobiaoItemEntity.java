@@ -13,6 +13,22 @@ public class SWChaobiaoItemEntity {
 	private String sjg5;
 	private String sjf1;
 	private String sjf2;
+	
+	private String shenhe;
+	private String chuli;
+	
+	public String getShenhe() {
+		return shenhe;
+	}
+	public void setShenhe(String shenhe) {
+		this.shenhe = shenhe;
+	}
+	public String getChuli() {
+		return chuli;
+	}
+	public void setChuli(String chuli) {
+		this.chuli = chuli;
+	}
 	public String getBianhao() {
 		return bianhao;
 	}

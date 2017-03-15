@@ -3,7 +3,7 @@ package com.mss.shtoone.app.domain;
 public class AppSWMaterialEntity {
 
 	private String name;
-	private String yonglinag;
+	private String yongliang;
 	private String scpeibi;
 	private String sgpeibi;
 	private String mbpeibi;
@@ -15,11 +15,11 @@ public class AppSWMaterialEntity {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getYonglinag() {
-		return yonglinag;
+	public String getYongliang() {
+		return yongliang;
 	}
-	public void setYonglinag(String yonglinag) {
-		this.yonglinag = yonglinag;
+	public void setYongliang(String yongliang) {
+		this.yongliang = yongliang;
 	}
 	public String getScpeibi() {
 		return scpeibi;

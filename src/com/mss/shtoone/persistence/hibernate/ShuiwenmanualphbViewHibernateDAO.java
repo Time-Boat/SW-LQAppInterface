@@ -309,9 +309,15 @@ ShuiwenmanualphbViewDAO {
 		//超标处理类型
 		if(cllx==1){
         	queryCondition +=" and  filepath is NULL  and ISNULL(chulijieguo,'')='' ";
-        }else if(cllx==2){
+        }else if(cllx>=2){
         	queryCondition +=" and (filepath is NOT NULL or  ISNULL(chulijieguo,'')<>'') ";
+        	if(cllx == 3){
+    			queryCondition += " and  yezhuyijian='' ";
+    		}else if(cllx==4){
+    			queryCondition += " and  yezhuyijian<>'' ";
+    		}
         }
+		
 		//检索超标内容
 		if(StringUtil.Null2Blank(bianhao).length()>0){
 			queryCondition +=" and bianhao="+Integer.parseInt(bianhao);
