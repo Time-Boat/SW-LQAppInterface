@@ -20,6 +20,10 @@ public interface ShuiwenmanualphbViewDAO extends GenericDAO<ShuiwenmanualphbView
 	
 	public ShuiwenphbView swmateriallist(String startTime,String endTime,String shebeibianhao, Integer biaoduan, 
 			Integer xiangmubu, String fn, int bsid);
+	
+	public ShuiwenphbView appSwmateriallist(String startTime,String endTime,String shebeibianhao, Integer biaoduan, 
+			Integer xiangmubu, String fn, int bsid);
+	
 }
 
 

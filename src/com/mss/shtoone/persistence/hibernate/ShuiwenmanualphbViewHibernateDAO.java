@@ -16,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Repository;
 
 import com.mss.shtoone.domain.GenericPageMode;
+import com.mss.shtoone.domain.LiqingphbView;
 import com.mss.shtoone.domain.ShuiwenmanualphbView;
 import com.mss.shtoone.domain.ShuiwenphbView;
 import com.mss.shtoone.domain.ShuiwenziduancfgView;
@@ -158,7 +159,7 @@ ShuiwenmanualphbViewDAO {
 						
 						
 						try {
-							hv.setLlgl1(String.format("%1$.1f", rs.getFloat("llgl1")));
+							hv.setLlfl1(String.format("%1$.1f", rs.getFloat("llgl1")));
 						} catch (Exception e) {}
 						try {
 							hv.setLlgl2(String.format("%1$.1f", rs.getFloat("llgl2")));
@@ -312,9 +313,9 @@ ShuiwenmanualphbViewDAO {
         }else if(cllx>=2){
         	queryCondition +=" and (filepath is NOT NULL or  ISNULL(chulijieguo,'')<>'') ";
         	if(cllx == 3){
-    			queryCondition += " and  yezhuyijian='' ";
+    			queryCondition += " and  yezhuyijian is null ";
     		}else if(cllx==4){
-    			queryCondition += " and  yezhuyijian<>'' ";
+    			queryCondition += " and  yezhuyijian is not null ";
     		}
         }
 		
@@ -830,6 +831,134 @@ ShuiwenmanualphbViewDAO {
 		return swphb;
 	}
 	
+	//app接口新增方法
+	public ShuiwenphbView appSwmateriallist(String startTime,String endTime,String shebeibianhao, Integer biaoduan, 
+			Integer xiangmubu, String fn, int bsid){
+		ShuiwenphbView swphb=null;
+		StringBuffer sql = new StringBuffer();
+		appendmanualSql(sql);
+		sql.append(" FROM ShuiwenmanualphbView WHERE 1=1 ");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		String newDate = sdf.format(new Date());		
+		if (!fn.equalsIgnoreCase("all")) {
+			sql.append(" and "+fn+"=" + bsid);
+		}
+		if (StringUtil.Null2Blank(shebeibianhao).length()>0) {			
+			sql.append(" and shebeibianhao in ("+shebeibianhao+")");
+		}		
+		if (null != biaoduan) {			
+			sql.append(" and biaoduanid ="+biaoduan);
+		}		
+		if (null != xiangmubu) {			
+			sql.append(" and xiangmubuid ="+xiangmubu);
+		}
+		if(StringUtil.Null2Blank(startTime).length()>0 && StringUtil.Null2Blank(endTime).length()>0){
+			sql.append(" and (shijianS between '"+startTime+"' and '"+endTime+"')");
+		}else if(StringUtil.Null2Blank(startTime).length()>0 && StringUtil.Null2Blank(endTime).length()==0){
+			sql.append(" and (shijianS between '"+startTime+"' and '"+newDate+"')");
+		}else if(StringUtil.Null2Blank(startTime).length()==0 && StringUtil.Null2Blank(endTime).length()>0){
+			sql.append(" and (shijianS between '1900-01-01' and '"+endTime+"')");
+		}
+			
+		ResultSet rs = null;
+		Statement st = null;
+		Connection con = null;
+		try {
+			con = getTemplate().getSessionFactory().openSession().connection();
+			st = con.createStatement();	
+			rs = st.executeQuery(sql.toString());
+			while(rs.next()){
+				swphb = new ShuiwenphbView();
+				//实际值
+				try{
+					swphb.setSjgl1(String.format("%1$.2f",rs.getFloat("sjgl1")/1000));
+				}catch(Exception ex){}
+				try{
+					swphb.setSjgl2(String.format("%1$.2f",rs.getFloat("sjgl2")/1000));
+				}catch(Exception ex){}
+				try{
+					swphb.setSjgl3(String.format("%1$.2f",rs.getFloat("sjgl3")/1000));
+				}catch(Exception ex){}
+				try{
+					swphb.setSjgl4(String.format("%1$.2f",rs.getFloat("sjgl4")/1000));
+				}catch(Exception ex){}
+				try{
+					swphb.setSjgl5(String.format("%1$.2f",rs.getFloat("sjgl5")/1000));
+				}catch(Exception ex){}
+				try{
+					swphb.setSjfl1(String.format("%1$.2f",rs.getFloat("sjfl1")/1000));
+				}catch(Exception ex){}
+				try{
+					swphb.setSjfl2(String.format("%1$.2f",rs.getFloat("sjfl2")/1000));
+				}catch(Exception ex){}
+				try{
+					swphb.setGlchangliang(String.format("%1$.2f",rs.getFloat("glchangliang")/1000));
+				}catch(Exception ex){}
+				
+				//配比值
+				swphb.setLlgl1(String.format("%1$.1f",rs.getDouble("llgl1")/1000));
+				swphb.setLlgl2(String.format("%1$.1f",rs.getDouble("llgl2")/1000));
+				swphb.setLlgl3(String.format("%1$.1f",rs.getDouble("llgl3")/1000));
+				swphb.setLlgl4(String.format("%1$.1f",rs.getDouble("llgl4")/1000));
+				swphb.setLlgl5(String.format("%1$.1f",rs.getDouble("llgl5")/1000));
+				swphb.setLlfl1(String.format("%1$.1f",rs.getDouble("llfl1")/1000));
+				swphb.setLlfl2(String.format("%1$.1f",rs.getDouble("llfl2")/1000));
+				
+				//偏差百分比
+				if(StringUtil.Null2Blank(rs.getString("llgl1")).length()>0 && rs.getDouble("llgl1")>0){
+					swphb.setPersjgl1(String.format("%1$.2f",(Double.parseDouble(swphb.getSjgl1())-Double.parseDouble(swphb.getLlgl1()))*100/Double.parseDouble(swphb.getLlgl1())));
+				}else{
+					swphb.setPersjgl1("0.00");
+				}
+				if(StringUtil.Null2Blank(rs.getString("llgl2")).length()>0 && rs.getDouble("llgl2")>0){
+					swphb.setPersjgl2(String.format("%1$.2f",(Double.parseDouble(swphb.getSjgl2())-Double.parseDouble(swphb.getLlgl2()))*100/Double.parseDouble(swphb.getLlgl2())));
+				}else{
+					swphb.setPersjgl2("0.00");
+				}
+				if(StringUtil.Null2Blank(rs.getString("llgl3")).length()>0 && rs.getDouble("llgl3")>0){
+					swphb.setPersjgl3(String.format("%1$.2f",(Double.parseDouble(swphb.getSjgl3())-Double.parseDouble(swphb.getLlgl3()))*100/Double.parseDouble(swphb.getLlgl3())));
+				}else{
+					swphb.setPersjgl3("0.00");
+				}
+				if(StringUtil.Null2Blank(rs.getString("llgl4")).length()>0 && rs.getDouble("llgl4")>0){
+					swphb.setPersjgl4(String.format("%1$.2f",(Double.parseDouble(swphb.getSjgl4())-Double.parseDouble(swphb.getLlgl4()))*100/Double.parseDouble(swphb.getLlgl4())));
+				}else{
+					swphb.setPersjgl4("0.00");
+				}
+				if(StringUtil.Null2Blank(rs.getString("llgl5")).length()>0 && rs.getDouble("llgl5")>0){
+					swphb.setPersjgl5(String.format("%1$.2f",(Double.parseDouble(swphb.getSjgl5())-Double.parseDouble(swphb.getLlgl5()))*100/Double.parseDouble(swphb.getLlgl5())));
+				}else{
+					swphb.setPersjgl5("0.00");
+				}
+				if(StringUtil.Null2Blank(rs.getString("llfl1")).length()>0 && rs.getDouble("llfl1")>0){
+					swphb.setPersjfl1(String.format("%1$.2f",(Double.parseDouble(swphb.getSjfl1())-Double.parseDouble(swphb.getLlfl1()))*100/Double.parseDouble(swphb.getLlfl1())));
+				}else{
+					swphb.setPersjfl1("0.00");
+				}
+				if(StringUtil.Null2Blank(rs.getString("llfl2")).length()>0 && rs.getDouble("llfl2")>0){
+					swphb.setPersjfl2(String.format("%1$.2f",(Double.parseDouble(swphb.getSjfl2())-Double.parseDouble(swphb.getLlfl2()))*100/Double.parseDouble(swphb.getLlfl2())));
+				}else{
+					swphb.setPersjfl2("0.00");
+				}
+				swphb.setShebeibianhao(rs.getString("shebeibianhao"));
+			
+			}
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}finally{
+			try {
+				rs.close();
+			} catch (Exception e) {}
+			try {
+				st.close();
+			} catch (Exception e1) {}
+			try {
+				con.close();
+			} catch (Exception e) {}
+		}
+		return swphb;
+	}
+	
 	private void appendmanualSql(StringBuffer sql) {
 		sql.append("SELECT Max(shebeibianhao) as shebeibianhao,");
 		sql.append("SUM(CAST((CASE WHEN (sjgl1 IS NULL) OR (sjgl1 = '') ");
@@ -847,8 +976,45 @@ ShuiwenmanualphbViewDAO {
 		sql.append("SUM(CAST((CASE WHEN (sjfl2 IS NULL) OR (sjfl2 = '') ");
 		sql.append("THEN '0' ELSE sjfl2 END) AS numeric(38, 2))) AS sjfl2,");
 		//理论值
+		sql.append("SUM(CAST((CASE WHEN (llgl1 IS NULL) OR (llgl1 = '')");
+		sql.append("THEN '0' ELSE llgl1 END) AS numeric(38, 2))/100*");
+		sql.append("CAST((CASE WHEN (glchangliang IS NULL)  ");
+		sql.append("THEN '0' ELSE glchangliang END) AS numeric(38, 2))) AS llgl1,");
 		
-		sql.append("SUM(glchangliang) AS changliang");
+		sql.append("SUM(CAST((CASE WHEN (llgl2 IS NULL) OR (llgl2 = '')");
+		sql.append("THEN '0' ELSE llgl2 END) AS numeric(38, 2))/100*");
+		sql.append("CAST((CASE WHEN (glchangliang IS NULL)  ");
+		sql.append("THEN '0' ELSE glchangliang END) AS numeric(38, 2))) AS llgl2,");
+		
+		sql.append("SUM(CAST((CASE WHEN (llgl3 IS NULL) OR (llgl3 = '')");
+		sql.append("THEN '0' ELSE llgl3 END) AS numeric(38, 2))/100*");
+		sql.append("CAST((CASE WHEN (glchangliang IS NULL)  ");
+		sql.append("THEN '0' ELSE glchangliang END) AS numeric(38, 2))) AS llgl3,");
+		
+		sql.append("SUM(CAST((CASE WHEN (llgl4 IS NULL) OR (llgl4 = '')");
+		sql.append("THEN '0' ELSE llgl4 END) AS numeric(38, 2))/100*");
+		sql.append("CAST((CASE WHEN (glchangliang IS NULL)  ");
+		sql.append("THEN '0' ELSE glchangliang END) AS numeric(38, 2))) AS llgl4,");
+		
+		sql.append("SUM(CAST((CASE WHEN (llgl5 IS NULL) OR (llgl5 = '')");
+		sql.append("THEN '0' ELSE llgl5 END) AS numeric(38, 2))/100*");
+		sql.append("CAST((CASE WHEN (glchangliang IS NULL)  ");
+		sql.append("THEN '0' ELSE glchangliang END) AS numeric(38, 2))) AS llgl5,");
+		
+		sql.append("SUM(CAST((CASE WHEN (llf1 IS NULL) OR (llfl1 = '')");
+		sql.append("THEN '0' ELSE llfl1 END) AS numeric(38, 2))/100*");
+		sql.append("CAST((CASE WHEN (glchangliang IS NULL)  ");
+		sql.append("THEN '0' ELSE glchangliang END) AS numeric(38, 2))) AS llfl1,");
+		
+		sql.append("SUM(CAST((CASE WHEN (llfl2 IS NULL) OR (llfl2 = '')");
+		sql.append("THEN '0' ELSE llfl2 END) AS numeric(38, 2))/100*");
+		sql.append("CAST((CASE WHEN (glchangliang IS NULL)  ");
+		sql.append("THEN '0' ELSE glchangliang END) AS numeric(38, 2))) AS llfl2,");
+		
+		sql.append("SUM(CAST((CASE WHEN (glchangliang IS NULL)  ");
+		sql.append("THEN '0' ELSE glchangliang END) AS numeric(38, 2))) AS glchangliang");
+				
+//		sql.append("SUM(glchangliang) AS changliang");
 	}
 }
 

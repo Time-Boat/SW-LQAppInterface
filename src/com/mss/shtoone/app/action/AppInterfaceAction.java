@@ -169,6 +169,9 @@ public class AppInterfaceAction extends BaseAction {
 		// 标识 相关类型id
 		String biaoshiid = request.getParameter("biaoshiid");
 
+		// 模块类型 沥青2 水稳6
+		String modelType = request.getParameter("modelType");
+
 		List<Biaoduanxinxi> bdList = new ArrayList();
 		List<Xiangmubuxinxi> xmbList = new ArrayList();
 		List<Banhezhanxinxi> bhzList = new ArrayList();
@@ -182,18 +185,18 @@ public class AppInterfaceAction extends BaseAction {
 				// 项目部信息
 				xmbList = appSystemService.xmbList();
 				// 拌合站信息
-				bhzList = appSystemService.bhzList();
+				bhzList = appSystemService.bhzList(modelType);
 			} else if ("2".equals(userType)) { // 标段 能看到所属标段下的组织机构
 				xmbList = appSystemService.getXmbByBD(biaoshiid);
 				sbf = new StringBuffer();
 				for (Xiangmubuxinxi x : xmbList) {
 					sbf.append(x.getId() + ",");
 				}
-				bhzList = appSystemService.getBhzByXmb(sbf.substring(0, sbf.length() - 1));
+				bhzList = appSystemService.getBhzByXmb(sbf.substring(0, sbf.length() - 1), modelType);
 			} else if ("3".equals(userType)) { // 项目部 只能看到所属项目部下的所有组织机构
 				Xiangmubuxinxi xmb = appSystemService.getXmbByid(biaoshiid);
 				xmbList.add(xmb);
-				bhzList = appSystemService.getBhzByXmb(xmb.getId() + "");
+				bhzList = appSystemService.getBhzByXmb(xmb.getId() + "", modelType);
 			} else if ("5".equals(userType)) { // 拌合站 只能看到指定的拌合站
 				Banhezhanxinxi bhz = appSystemService.getBhzById(biaoshiid);
 				bhzList.add(bhz);
@@ -267,7 +270,7 @@ public class AppInterfaceAction extends BaseAction {
 				}
 				returnJsonObj.put("data", bhzInfoList);
 			} else {
-				returnJsonObj.put("data", null);
+				returnJsonObj.put("data", "[]");
 			}
 			returnJsonObj.put("success", true);
 		} catch (Exception e) {
@@ -517,17 +520,16 @@ public class AppInterfaceAction extends BaseAction {
 					list.add(sws);
 				}
 			} else if ("3".equals(departType)) {
-				List<Banhezhanxinxi> bhzList = appSystemService.getBhzByXmb(a + "");
+				List<Banhezhanxinxi> bhzList = appSystemService.getBhzByXmb(a + "", "6");
 				for (int i = 0; i < bhzList.size(); i++) {
 
 					int id = bhzList.get(i).getId();
-					
-					
-					
+
 					List<ShuiwenxixxView> sList = appSystemService.swsmstongji(startTime, endTime, null, a,
 							shebeibianhao, StringUtil.getQueryFieldNameByUserType(Integer.valueOf(departType)), a, 0);
 
-					Map<String, String> map = appSystemService.getCbcz(startTime, endTime, null, null, bhzList.get(i).getGprsbianhao());
+					Map<String, String> map = appSystemService.getCbcz(startTime, endTime, null, null,
+							bhzList.get(i).getGprsbianhao());
 
 					String cczplv = "0.00";
 					String mczplv = "0.00";
@@ -648,7 +650,8 @@ public class AppInterfaceAction extends BaseAction {
 		String shebeibianhao = request.getParameter("shebeibianhao");
 		String chaobiaolx = request.getParameter("chaobiaolx"); // 0 全部 1 初级 2
 																// 中级 3 高级
-		String cllx = request.getParameter("cllx"); // 0 全部 1 未处理 2 已处理
+		String cllx = request.getParameter("cllx"); // 处理类型 0 全部 1 未处理 2 已处理 3
+													// 未审批 4 已审批
 
 		if (!StringUtil.isNotEmpty(departType) || !StringUtil.isNotEmpty(biaoshiid)) {
 			returnJsonObj.put("description", "departType或者biaoshiid为空");
@@ -790,110 +793,15 @@ public class AppInterfaceAction extends BaseAction {
 		Integer a = departType == "" || departType == null ? null : Integer.valueOf(departType);
 		Integer b = biaoshiid == "" || biaoshiid == null ? null : Integer.valueOf(biaoshiid);
 
-		ShuiwenphbView swp = appSystemService.swmateriallist(startTime, endTime, shebeibianhao, null, null,
+		ShuiwenphbView swp = appSystemService.appSwmateriallist(startTime, endTime, shebeibianhao, null, null,
 				StringUtil.getQueryFieldNameByUserType(a), b);
 
 		ShuiwenziduancfgView swziduanfield = queryService.getSwfield(shebeibianhao);
 
-		List<SWMaterialStatisticsData> swdList = new ArrayList<SWMaterialStatisticsData>();
-		
-//		field.setClTime(swziduanfield.getShijian());
-//		field.setSjf1(swziduanfield.getSjfl1());
-//		field.setSjf2(swziduanfield.getSjfl2());
-//		field.setSjg1(swziduanfield.getSjgl1());
-//		field.setSjg2(swziduanfield.getSjgl2());
-//		field.setSjg3(swziduanfield.getSjgl3());
-//		field.setSjg4(swziduanfield.getSjgl4());
-//		field.setSjg5(swziduanfield.getSjgl5());
-		
-		Shuiwenxixxdanjia dj = queryService.SwcalTotaljiage(swp, shebeibianhao);
-		
-		SWMaterialStatisticsData swd = new SWMaterialStatisticsData();
-		swd.setName(swziduanfield.getSjfl1());
-		swd.setValue(swp == null ? "0" : swp.getSjfl1());
-		swd.setPrice(dj == null ? "0" : dj.getDjf1());
-		swdList.add(swd);
-
-		swd = new SWMaterialStatisticsData();
-		swd.setName(swziduanfield.getSjfl2());
-		swd.setValue(swp == null ? "0" : swp.getSjfl2());
-		swd.setPrice(dj == null ? "0" : dj.getDjf2());
-		swdList.add(swd);
-		
-		swd = new SWMaterialStatisticsData();
-		swd.setName(swziduanfield.getSjgl1());
-		swd.setValue(swp == null ? "0" : swp.getSjgl1());
-		swd.setPrice(dj == null ? "0" : dj.getDjg1());
-		swdList.add(swd);
-		
-		swd = new SWMaterialStatisticsData();
-		swd.setName(swziduanfield.getSjgl2());
-		swd.setValue(swp == null ? "0" : swp.getSjgl2());
-		swd.setPrice(dj == null ? "0" : dj.getDjg2());
-		swdList.add(swd);
-		
-		swd = new SWMaterialStatisticsData();
-		swd.setName(swziduanfield.getSjgl3());
-		swd.setValue(swp == null ? "0" : swp.getSjgl3());
-		swd.setPrice(dj == null ? "0" : dj.getDjg3());
-		swdList.add(swd);
-		
-		swd = new SWMaterialStatisticsData();
-		swd.setName(swziduanfield.getSjgl4());
-		swd.setValue(swp == null ? "0" : swp.getSjgl4());
-		swd.setPrice(dj == null ? "0" : dj.getDjg4());
-		swdList.add(swd);
-		
-		swd = new SWMaterialStatisticsData();
-		swd.setName(swziduanfield.getSjgl5());
-		swd.setValue(swp == null ? "0" : swp.getSjgl5());
-		swd.setPrice(dj == null ? "0" : dj.getDjg5());
-		swdList.add(swd);
-		
-		SWChaobiaoItemEntity simpleData = new SWChaobiaoItemEntity();
-		if (swp == null) {
-			simpleData.setSjf1("0");
-			simpleData.setSjf2("0");
-			simpleData.setSjg1("0");
-			simpleData.setSjg2("0");
-			simpleData.setSjg3("0");
-			simpleData.setSjg4("0");
-			simpleData.setSjg5("0");
-		} else {
-			simpleData.setSjf1(swp.getSjfl1());
-			simpleData.setSjf2(swp.getSjfl2());
-			simpleData.setSjg1(swp.getSjgl1());
-			simpleData.setSjg2(swp.getSjgl2());
-			simpleData.setSjg3(swp.getSjgl3());
-			simpleData.setSjg4(swp.getSjgl4());
-			simpleData.setSjg5(swp.getSjgl5());
-		}
-
-		
-
-		SWChaobiaoItemEntity simpleDj = new SWChaobiaoItemEntity();
-		if (dj == null) {
-			simpleDj.setSjf1("0");
-			simpleDj.setSjf2("0");
-			simpleDj.setSjg1("0");
-			simpleDj.setSjg2("0");
-			simpleDj.setSjg3("0");
-			simpleDj.setSjg4("0");
-			simpleDj.setSjg5("0");
-		} else {
-			simpleDj.setSjf1(dj.getDjf1());
-			simpleDj.setSjf2(dj.getDjf2());
-			simpleDj.setSjg1(dj.getDjg1());
-			simpleDj.setSjg2(dj.getDjg2());
-			simpleDj.setSjg3(dj.getDjg3());
-			simpleDj.setSjg4(dj.getDjg4());
-			simpleDj.setSjg5(dj.getDjg5());
-		}
-
-		SWChaobiaoItemEntity field = swapField(swziduanfield);
+		List<AppSWMaterialEntity> asw = bean2List1(swp, swziduanfield, -1);
 
 		try {
-			returnJsonObj.put("data", swdList);
+			returnJsonObj.put("data", asw);
 			returnJsonObj.put("success", true);
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -918,7 +826,7 @@ public class AppInterfaceAction extends BaseAction {
 		String shebeibianhao = request.getParameter("shebeibianhao");
 
 		ShuiwenmanualphbView sw = queryService.swmanualphbfindById(Integer.parseInt(bianhao));
-		
+
 		Shuiwenxixxjieguo swjg = sysService.getSwjieguobybh(Integer.parseInt(bianhao));
 
 		SWChaobiaoCZSHInfo simpleJg = new SWChaobiaoCZSHInfo();
@@ -987,6 +895,38 @@ public class AppInterfaceAction extends BaseAction {
 				swm.setYongliang(yongliang);
 				swm.setScpeibi(scpeibi);
 				swm.setSgpeibi(sgpeibi);
+				swm.setMbpeibi(mbpeibi);
+				swm.setWucha(wucha);
+
+				bciList.add(swm);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return bciList;
+	}
+
+	//
+	public <T> List<AppSWMaterialEntity> bean2List1(T t, ShuiwenziduancfgView hbfield, int objType) {
+
+		List<AppSWMaterialEntity> bciList = new ArrayList<AppSWMaterialEntity>();
+
+		String[] cfg = { "fl1", "fl2", "gl1", "gl2", "gl3", "gl4", "gl5" };
+
+		for (int i = 0; i < cfg.length; i++) {
+			AppSWMaterialEntity swm = new AppSWMaterialEntity();
+			try {
+				String name = (String) hbfield.getClass().getMethod("get" + "Sj" + cfg[i], new Class[] {})
+						.invoke(hbfield, new Object[] {});
+				String yongliang = (String) t.getClass().getMethod("get" + "Sj" + cfg[i], new Class[] {}).invoke(t,
+						new Object[] {});
+				String mbpeibi = (String) t.getClass().getMethod("get" + "Ll" + cfg[i], new Class[] {}).invoke(t,
+						new Object[] {});
+				String wucha = (String) t.getClass().getMethod("get" + "Persj" + cfg[i], new Class[] {}).invoke(t,
+						new Object[] {});
+
+				swm.setName(name);
+				swm.setYongliang(yongliang);
 				swm.setMbpeibi(mbpeibi);
 				swm.setWucha(wucha);
 
