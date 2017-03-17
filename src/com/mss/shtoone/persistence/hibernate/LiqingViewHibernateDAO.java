@@ -1977,33 +1977,39 @@ LiqingViewDAO {
 			strendTime = endTimeOne;
 		}
 
-		StringBuilder queryCondition = new StringBuilder("");
-		queryCondition.append(" (convert(datetime,shijian,121) between '" + strstartTime+ "' and '" + strendTime + "')");
+		String queryCondition =
+		" (convert(datetime,shijian,121) between '" + strstartTime+ "' and '" + strendTime + "')";
 		if (!fn.equalsIgnoreCase("all")) {
-			queryCondition.append(" and "+fn+"=" + bsid);
+			queryCondition +=" and "+fn+"=" + bsid;
 		}
 		
 		if (StringUtil.Null2Blank(shebeibianhao).length() > 0) {
-			queryCondition.append(" and shebeibianhao='" + shebeibianhao + "'");
+			queryCondition +=" and shebeibianhao='" + shebeibianhao + "'";
 		}
 		
 		if (null != biaoduan) {
-			queryCondition.append(" and biaoduanid=" + biaoduan);
+			queryCondition +=" and biaoduanid=" + biaoduan;
 		}
 		if (null != xiangmubu) {
-			queryCondition.append(" and xiangmubuid=" + xiangmubu);
+			queryCondition +=" and xiangmubuid=" + xiangmubu;
+		}
+		//超标处理类型
+		if (cllx == 1) {
+			queryCondition += " and  filepath is NULL  and ISNULL(chulijieguo,'')='' ";
+		} else if (cllx >= 2) {
+			queryCondition += " and (filepath <> '' or  ISNULL(chulijieguo,'')<>'') ";
+			if (cllx == 3) {
+				queryCondition += " and  yezhuyijian is null ";
+			} else if (cllx == 4) {
+				queryCondition += " and  yezhuyijian <> '' ";
+			}
 		}
 		// 检索超标内容
 		if (StringUtil.Null2Blank(bianhao).length() > 0) {
-			queryCondition.append(" and bianhao=" + Integer.parseInt(bianhao));
+			queryCondition +=" and bianhao=" + Integer.parseInt(bianhao);
 		}
-		// 超标处理类型
-		if (cllx == 1) {
-			queryCondition.append( " and  filepath is NULL  and ISNULL(chulijieguo,'')='' ");
-		} else if (cllx == 2) {
-			queryCondition.append(" and (filepath is NOT NULL or  ISNULL(chulijieguo,'')<>'') ");
-		}
-
+		
+		
 		if (null != lqisshow) {
 			StringBuilder tempCondition = new StringBuilder("1=2");
 			switch (chaobiaolx) {
@@ -2198,7 +2204,7 @@ LiqingViewDAO {
 			}
 			
 			if (tempCondition.toString().length()>6) {
-				queryCondition.append(" and ("+tempCondition.toString()+")");
+				queryCondition+=" and ("+tempCondition.toString()+")";
 			}
 		}
 		
@@ -2217,6 +2223,7 @@ LiqingViewDAO {
 			cs.registerOutParameter(7, java.sql.Types.INTEGER);
 			cs.registerOutParameter(8, java.sql.Types.INTEGER);
 			cs.setString(9, queryCondition.toString());
+			
 			boolean bHasResultSet = cs.execute();
 			if (bHasResultSet) {
 				rs = cs.getResultSet();

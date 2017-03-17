@@ -844,7 +844,7 @@ ShuiwenmanualphbViewDAO {
 			sql.append(" and "+fn+"=" + bsid);
 		}
 		if (StringUtil.Null2Blank(shebeibianhao).length()>0) {			
-			sql.append(" and shebeibianhao in ("+shebeibianhao+")");
+			sql.append(" and shebeibianhao = '"+shebeibianhao+"' ");
 		}		
 		if (null != biaoduan) {			
 			sql.append(" and biaoduanid ="+biaoduan);

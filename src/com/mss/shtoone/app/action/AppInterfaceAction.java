@@ -741,11 +741,15 @@ public class AppInterfaceAction extends BaseAction {
 		}
 
 		SWChaobiaoItemEntity field = swapField(swziduanfield);
+		SWChaobiaoItemEntity show = swapField(swisshow);
+		show.setZcl(swisshow.getGlchangliang());
+		
 		field.setZcl("总产量");
 		field.setBianhao("编号");
 		field.setBzhName("拌合站名称");
 
 		try {
+			returnJsonObj.put("isShow", show);
 			returnJsonObj.put("field", field);
 			returnJsonObj.put("data", simplifylist);
 			returnJsonObj.put("success", true);

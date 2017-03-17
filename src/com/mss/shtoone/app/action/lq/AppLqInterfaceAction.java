@@ -18,11 +18,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import com.mss.shtoone.app.action.BaseAction;
+import com.mss.shtoone.app.domain.AppSWMaterialEntity;
 import com.mss.shtoone.app.domain.BhzInfoEntity;
+import com.mss.shtoone.app.domain.SWChaobiaoCZSHInfo;
 import com.mss.shtoone.app.domain.SWChaobiaoItemEntity;
 import com.mss.shtoone.app.domain.SWWraningStatisticsEntity;
+import com.mss.shtoone.app.domain.SWXQHeadInfoEntity;
+import com.mss.shtoone.app.domain.lq.AppLQMaterialEntity;
+import com.mss.shtoone.app.domain.lq.LQChaobiaoCZSHInfo;
 import com.mss.shtoone.app.domain.lq.LQChaobiaoItemEntity;
 import com.mss.shtoone.app.domain.lq.LQWraningStatisticsEntity;
+import com.mss.shtoone.app.domain.lq.LQXQHeadInfoEntity;
 import com.mss.shtoone.app.domain.lq.LQziduancfgItemEntity;
 import com.mss.shtoone.app.persistence.hibernate.AppServiceHibernateDAO;
 import com.mss.shtoone.app.persistence.hibernate.lq.AppLqServiceHibernateDAO;
@@ -31,12 +37,15 @@ import com.mss.shtoone.domain.Biaoduanxinxi;
 import com.mss.shtoone.domain.GenericPageMode;
 import com.mss.shtoone.domain.LiqingView;
 import com.mss.shtoone.domain.LiqingmanualphbView;
+import com.mss.shtoone.domain.Liqingxixxjieguo;
 import com.mss.shtoone.domain.LiqingziduancfgView;
 import com.mss.shtoone.domain.ShuiwenmanualphbView;
 import com.mss.shtoone.domain.ShuiwenxixxView;
+import com.mss.shtoone.domain.Shuiwenxixxjieguo;
 import com.mss.shtoone.domain.ShuiwenziduancfgView;
 import com.mss.shtoone.domain.Xiangmubuxinxi;
 import com.mss.shtoone.service.QueryService;
+import com.mss.shtoone.service.SystemService;
 import com.mss.shtoone.util.GetDate;
 import com.mss.shtoone.util.JsonUtil;
 import com.mss.shtoone.util.StringUtil;
@@ -53,6 +62,9 @@ public class AppLqInterfaceAction extends BaseAction{
 	
 	@Autowired
 	private QueryService queryService;
+	
+	@Autowired
+	private SystemService sysService;
 	
 	@Action("lqWarningStatistics")
 	public void lqWarningStatistics(){
@@ -512,18 +524,20 @@ public class AppLqInterfaceAction extends BaseAction{
 
 			String shenhe = sw.getYezhuyijian();
 
-			// 本条数据是否审核
-			if (StringUtil.isNotEmpty(shenhe)) {
-				sc.setShenhe("1");
-			} else {
-				sc.setShenhe("0");
-			}
+			
 			// 本条数据是否处置
 			if (StringUtil.isNotEmpty(chuli)) {
 				sc.setChuli("1");
 			} else {
 				sc.setChuli("0");
 			}
+			
+			// 本条数据是否审核
+			if (StringUtil.isNotEmpty(shenhe)) {
+				sc.setShenhe("1");
+			} else {
+				sc.setShenhe("0");
+			}			
 
 			simplifylist.add(sc);
 		}
@@ -532,7 +546,18 @@ public class AppLqInterfaceAction extends BaseAction{
 		
 		LQziduancfgItemEntity lqisshow2 = lqapField2(lqisshow);
 		
-		
+		if(lqisshow2.getClwd() == null || "0".equals(lqisshow2.getClwd())){
+			lqisshow2.setClwd("1");
+		}
+		if(lqisshow2.getGlwd() == null || "0".equals(lqisshow2.getGlwd())){
+			lqisshow2.setGlwd("1");
+		}
+		if(lqisshow2.getLqwd() == null || "0".equals(lqisshow2.getLqwd())){
+			lqisshow2.setLqwd("1");
+		}
+		if(lqisshow2.getSjysb() == null || "0".equals(lqisshow2.getSjysb())){
+			lqisshow2.setSjysb("1");
+		}
 		
 		field.setBianhao("编号");
 		field.setBhzName("拌合站名称");
@@ -599,4 +624,107 @@ public class AppLqInterfaceAction extends BaseAction{
 			return field;
 		}
 		
+		
+		// 沥青超标查询
+		@Action("lqchaoBiaoXQ")
+		public void lqchaoBiaoXQ() {
+
+			ActionContext context = ActionContext.getContext();
+			HttpServletRequest request = (HttpServletRequest) context.get(ServletActionContext.HTTP_REQUEST);
+			HttpServletResponse response = (HttpServletResponse) context.get(ServletActionContext.HTTP_RESPONSE);
+
+			JsonUtil.responseUTF8(response);
+			JSONObject returnJsonObj = new JSONObject();
+
+			String bianhao = request.getParameter("bianhao");
+			String shebeibianhao = request.getParameter("shebeibianhao");
+
+			LiqingmanualphbView lq = queryService.lqmanualphbfindById(Integer.parseInt(bianhao));
+
+			Liqingxixxjieguo lqjg = sysService.getLljieguobybh(Integer.parseInt(bianhao));
+
+			LQChaobiaoCZSHInfo simpleJg = new LQChaobiaoCZSHInfo();
+			// 监理
+			simpleJg.setChulifangshi(lqjg.getChulifangshi());
+			simpleJg.setChulijieguo(lqjg.getChulijieguo());
+			simpleJg.setChuliren(lqjg.getJianliren());
+			simpleJg.setShenpidate(lqjg.getShenpidate());
+			simpleJg.setWentiyuanyin(lqjg.getWentiyuanyin());
+			// 业主
+			simpleJg.setConfirmdate(lqjg.getConfirmdate());
+			simpleJg.setYezhuren(lqjg.getYezhuren());
+			simpleJg.setYezhuyijian(lqjg.getYezhuyijian());
+			simpleJg.setBeizhu(lqjg.getBeizhu());
+
+			// 头信息
+			LQXQHeadInfoEntity lqHead = new LQXQHeadInfoEntity();
+			lqHead.setCaijishijian(lq.getCaijishijian());
+			lqHead.setCl(lq.getChangliang());
+			lqHead.setChuliaoshijian(lq.getShijian());
+			lqHead.setBhjName(lq.getBanhezhanminchen());
+
+			LiqingziduancfgView lqziduanfield = queryService.getLqfield(shebeibianhao);
+			// SWChaobiaoItemEntity field = swapField(swziduanfield);
+
+			try {
+				List<AppLQMaterialEntity> alq = bean2List(lq, lqziduanfield, -1);
+				
+				
+				returnJsonObj.put("lqHead", lqHead);
+				returnJsonObj.put("lqData", alq);
+				returnJsonObj.put("lqjg", simpleJg);
+				returnJsonObj.put("success", true);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				returnJsonObj.put("data", "[]");
+				returnJsonObj.put("success", false);
+			}
+			responseOutWrite(response, returnJsonObj);
+		}
+		
+		
+		// 获取指定实体类中的指定数据
+		public <T> List<AppLQMaterialEntity> bean2List(T t, LiqingziduancfgView hbfield, int objType) {
+
+			List<AppLQMaterialEntity> bciList = new ArrayList<AppLQMaterialEntity>();
+
+			String[] cfg = { "g1", "g2", "g3", "g4", "g5", "g6","g7" ,"f1","f2","lq","tjj","ysb"};
+			
+			try {
+					for (int i = 0; i < cfg.length; i++) {
+						AppLQMaterialEntity lqm = new AppLQMaterialEntity();
+					String name = (String) hbfield.getClass().getMethod("get" + "Sj" + cfg[i], new Class[] {})
+							.invoke(hbfield, new Object[] {});
+					String yongliang = (String) t.getClass().getMethod("get" + "Sj" + cfg[i], new Class[] {}).invoke(t,
+							new Object[] {});
+					String scpeibi="";
+					if(i == cfg.length-1){
+						 scpeibi = (String) t.getClass().getMethod("get" + "Persjg1" , new Class[] {}).invoke(t,
+								new Object[] {});
+					}else{
+						 scpeibi = (String) t.getClass().getMethod("get" + "Persj" + cfg[i], new Class[] {}).invoke(t,
+								new Object[] {});
+					}
+					
+					String sgpeibi = (String) t.getClass().getMethod("get" + "Ll" + cfg[i], new Class[] {}).invoke(t,
+							new Object[] {});
+					String wucha = (String) t.getClass().getMethod("get" + "Manualwsj" + cfg[i], new Class[] {}).invoke(t,
+							new Object[] {});
+
+					lqm.setName(name);
+					lqm.setYongliang(yongliang);
+					lqm.setScpeibi(scpeibi);
+					lqm.setSgpeibi(sgpeibi);
+
+					lqm.setWucha(wucha);
+
+					bciList.add(lqm);
+					}
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			
+			return bciList;
+		}
 }
