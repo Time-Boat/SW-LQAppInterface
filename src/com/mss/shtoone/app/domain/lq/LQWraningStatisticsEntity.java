@@ -1,4 +1,4 @@
-package com.mss.shtoone.app.domain;
+ package com.mss.shtoone.app.domain.lq;
 
 public class LQWraningStatisticsEntity {
 	private String bsId;

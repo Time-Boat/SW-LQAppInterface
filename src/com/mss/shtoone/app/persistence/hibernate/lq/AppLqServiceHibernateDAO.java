@@ -1,4 +1,4 @@
-package com.mss.shtoone.app.persistence.hibernate;
+package com.mss.shtoone.app.persistence.hibernate.lq;
 
 import java.util.List;
 import java.util.Map;
@@ -12,8 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.mss.shtoone.app.domain.AppLoginLogEntity;
 import com.mss.shtoone.app.persistence.AppLqDAO;
+import com.mss.shtoone.domain.GenericPageMode;
 import com.mss.shtoone.domain.LiqingView;
+import com.mss.shtoone.domain.LiqingziduancfgView;
 import com.mss.shtoone.domain.ShuiwenxixxView;
+import com.mss.shtoone.persistence.LiqingViewDAO;
 import com.mss.shtoone.persistence.SmsinfoDAO;
 import com.mss.shtoone.persistence.hibernate.GenericHibernateDAO;
 
@@ -27,6 +30,10 @@ public class AppLqServiceHibernateDAO {
 	@Autowired
 	private AppLqDAO appLqDAO;
 	
+	
+	@Autowired
+	private LiqingViewDAO lqDAO;
+	
 	public List<LiqingView> smstongji(String startTime, String endTime, Integer biaoduan, Integer xiangmubu,
 			String shebeibianhao, String fn, Integer bsid, Integer fzlx,int jbsj) {
 		return smsDAO.smstongji(startTime, endTime, biaoduan, xiangmubu, shebeibianhao, fn, bsid, fzlx,jbsj);
@@ -38,6 +45,13 @@ public class AppLqServiceHibernateDAO {
 		// TODO Auto-generated method stub
 		return appLqDAO.getCbcz(startTime, endTime, biaoduan, xiangmubu, shebeibianhao);
 	}
-
+	
+	//沥青超标查询
+	public GenericPageMode lqchaobiaomanualviewlist(LiqingziduancfgView lqisshow, Integer chaobiaolx,String shebeibianhao,String startTimeOne,
+			String endTimeOne,Integer biaoduan, Integer xiangmubu, 
+			String fn, int bsid, int offset, int pagesize,Integer cllx,String str) {
+		return lqDAO.lqchaobiaomanualviewlist(lqisshow, chaobiaolx,shebeibianhao,startTimeOne,endTimeOne,
+				biaoduan, xiangmubu, fn, bsid, offset, pagesize,cllx,str);
+	}
 
 }

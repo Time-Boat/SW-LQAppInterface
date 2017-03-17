@@ -916,7 +916,7 @@ public class HntExcelUtil {
 								sheet.addCell(nb);
 							}
 							
-							int i=k+5;
+							int i=k+7;
 							Cell cell1 = sheet.getCell(k,j*4+3);
 							if (cell1.getType()==CellType.NUMBER) {
 								   jxl.write.Number nb=(jxl.write.Number) cell1;
@@ -927,7 +927,7 @@ public class HntExcelUtil {
 								sheet.addCell(nb);
 							}
 							
-							int m=k+10;
+							int m=k+14;
 							Cell cell2 = sheet.getCell(k,j*4+4);
 							if (cell2.getType()==CellType.NUMBER) {
 								   jxl.write.Number nb=(jxl.write.Number) cell2;
@@ -938,7 +938,7 @@ public class HntExcelUtil {
 								sheet.addCell(nb);
 							}
 							
-							int n=k+15;
+							int n=k+21;
 							Cell cell3 = sheet.getCell(k,j*4+5);
 							if (cell3.getType()==CellType.NUMBER) {
 								   jxl.write.Number nb=(jxl.write.Number) cell3;

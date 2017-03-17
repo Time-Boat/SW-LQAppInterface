@@ -29,6 +29,7 @@ import com.mss.shtoone.domain.LiqingziduancfgView;
 import com.mss.shtoone.domain.LqshaifenjieguoView;
 import com.mss.shtoone.domain.Sessionupdatetime;
 import com.mss.shtoone.domain.ShaifenjieguoView;
+import com.mss.shtoone.domain.Shaifenziduancfg;
 import com.mss.shtoone.domain.ShuiwenmanualphbView;
 import com.mss.shtoone.domain.ShuiwenphbView;
 import com.mss.shtoone.domain.ShuiwenxixxView;
@@ -5321,320 +5322,559 @@ public class GetdataService {
         return FusionChartsCreator.createChart(StringUtil.getWebrootpath()+"/FusionCharts/MSCombiDY2D.swf", "",strXML.toString(), "LqAnalysisChart", 1000, 300, false, false);
 	}
 	
-	public String chartJipeipic(ShaifenjieguoView sfjieguo){
-		String buwei="";
-		Shuiwenxixxlilun swlilun=swllService.getBeanById(sfjieguo.getLlid());
-		if(swlilun!=null){
-			buwei=swlilun.getLlbuwei();
-		}
-		StringBuilder strXML = new StringBuilder("");
-		strXML.append("<?xml version='1.0' encoding='utf-8'?><chart caption='"+StringUtil.Null2Blank(buwei)+"关键筛分通过率波动图' subcaption='");
-		strXML.append("' lineThickness='2' showValues='0' anchorRadius='2' ");
-		strXML.append("divLineAlpha='20' divLineColor='CC3300' divLineIsDashed='1' slantLabels='1' ");
-		strXML.append("showAlternateHGridColor='1' alternateHGridColor='CC3300' shadowAlpha='40' ");
-		strXML.append("labelStep='");
-		strXML.append(1);
-		strXML.append("' numvdivlines='15' chartRightMargin='35' chartLeftMargin='35' formatNumberScale='0' ");
-		strXML.append("bgColor='FFFFFF,CC3300' bgAngle='270' bgAlpha='10,10' alternateHGridAlpha='5' numberSuffix='' yAxisName='各筛分通过质量百分率(%)'> ");
-		strXML.append("<categories>");
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper1()).length()>0){
-			strXML.append("<category label='0.075'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper7()).length()>0){
-			strXML.append("<category label='4.75'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper8()).length()>0){
-			strXML.append("<category label='9.5'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper11()).length()>0){
-			strXML.append("<category label='19'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper13()).length()>0){
-			strXML.append("<category label='31.5'/>");
-		}
-		/*
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper2()).length()>0){
-			strXML.append("<category label='0.15'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper3()).length()>0){
-			strXML.append("<category label='0.3'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper4()).length()>0){
-			strXML.append("<category label='0.6'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper5()).length()>0){
-			strXML.append("<category label='1.18'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper6()).length()>0){
-			strXML.append("<category label='2.36'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper7()).length()>0){
-			strXML.append("<category label='4.75'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper8()).length()>0){
-			strXML.append("<category label='9.5'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper9()).length()>0){
-			strXML.append("<category label='13.2'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper10()).length()>0){
-			strXML.append("<category label='16'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper11()).length()>0){
-			strXML.append("<category label='19'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper12()).length()>0){
-			strXML.append("<category label='26.5'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper13()).length()>0){
-			strXML.append("<category label='31.5'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper14()).length()>0){
-			strXML.append("<category label='37.5'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper15()).length()>0){
-			strXML.append("<category label='53'/>");
-		}*/
-		strXML.append("</categories>");
-	
-		/*
-		 * 
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper7()).length()>0){
-			strXML.append("<category label='4.75'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper8()).length()>0){
-			strXML.append("<category label='9.5'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper11()).length()>0){
-			strXML.append("<category label='19'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper13()).length()>0){
-			strXML.append("<category label='31.5'/>");
-		}
-		 */
-		
-		strXML.append("<dataset seriesName='-允许波动上限-'>");
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper1()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMaxpassper1()+"'/>");
-		}
-		/*
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper2()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMaxpassper2()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper3()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMaxpassper3()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper4()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMaxpassper4()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper5()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMaxpassper5()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper6()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMaxpassper6()+"'/>");
-		}*/
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper7()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMaxpassper7()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper8()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMaxpassper8()+"'/>");
-		}
-		/*
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper9()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMaxpassper9()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper10()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMaxpassper10()+"'/>");
-		}*/
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper11()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMaxpassper11()+"'/>");
-		}
-		/*
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper12()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMaxpassper12()+"'/>");
-		}*/
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper13()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMaxpassper13()+"'/>");
-		}
-		/*
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper14()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMaxpassper14()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper15()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMaxpassper15()+"'/>");
-		}*/
-		strXML.append("</dataset>");
-		
-		strXML.append("<dataset seriesName='-允许波动下限-'>");
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper1()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMinpassper1()+"'/>");
-		}
-		/*
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper2()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMinpassper2()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper3()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMinpassper3()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper4()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMinpassper4()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper5()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMinpassper5()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper6()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMinpassper6()+"'/>");
-		}*/
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper7()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMinpassper7()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper8()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMinpassper8()+"'/>");
-		}
-		/*
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper9()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMinpassper9()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper10()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMinpassper10()+"'/>");
-		}*/
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper11()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMinpassper11()+"'/>");
-		}
-		/*
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper12()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMinpassper12()+"'/>");
-		}*/
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper13()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMinpassper13()+"'/>");
-		}
-		/*
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper14()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMinpassper14()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper15()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getMinpassper15()+"'/>");
-		}*/
-		strXML.append("</dataset>");
-		
-		strXML.append("<dataset seriesName='-标准级配-'>");
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper1()).length()>0){
-			//System.out.println(sfjieguo.getStandPassper1());
-			strXML.append("<set value='"+sfjieguo.getStandPassper1()+"'/>");
-		}
-		/*
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper2()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getStandPassper2()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper3()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getStandPassper3()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper4()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getStandPassper4()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper5()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getStandPassper5()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper6()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getStandPassper6()+"'/>");
-		}*/
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper7()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getStandPassper7()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper8()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getStandPassper8()+"'/>");
-		}/*	
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper9()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getStandPassper9()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper10()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getStandPassper10()+"'/>");
-		}*/
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper11()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getStandPassper11()+"'/>");
-		}
-		/*
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper12()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getStandPassper12()+"'/>");
-		}*/
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper13()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getStandPassper13()+"'/>");
-		}
-		/*
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper14()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getStandPassper14()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper15()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getStandPassper15()+"'/>");
-		}*/
-		strXML.append("</dataset>");
-		
-		
-		strXML.append("<dataset seriesName='-实际级配-'>");
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper1()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getPassper1()+"'/>");
-		}
-		/*
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper2()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getPassper2()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper3()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getPassper3()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper4()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getPassper4()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper5()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getPassper5()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper6()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getPassper6()+"'/>");
-		}*/
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper7()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getPassper7()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper8()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getPassper8()+"'/>");
-		}
-		/*
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper9()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getPassper9()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper10()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getPassper10()+"'/>");
-		}*/
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper11()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getPassper11()+"'/>");
-		}
-		/*
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper12()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getPassper12()+"'/>");
-		}*/
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper13()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getPassper13()+"'/>");
-		}
-		/*
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper14()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getPassper14()+"'/>");
-		}
-		if(StringUtil.Null2Blank(sfjieguo.getStandPassper15()).length()>0){
-			strXML.append("<set value='"+sfjieguo.getPassper15()+"'/>");
-		}*/
-		strXML.append("</dataset>");
+	//水稳级配曲线图
+			public String chartJipeipic(ShaifenjieguoView sfjieguo,Shaifenziduancfg swsfsmslow,Shaifenziduancfg swsfsmshigh){
+				String buwei="";
+				Shuiwenxixxlilun swlilun=swllService.getBeanById(sfjieguo.getLlid());
+				if(swlilun!=null){
+					buwei=swlilun.getLlbuwei();
+				}
+				StringBuilder strXML = new StringBuilder("");
+				strXML.append("<?xml version='1.0' encoding='utf-8'?><chart caption='"+StringUtil.Null2Blank(buwei)+"合成级配曲线图' subcaption='");
+				strXML.append("' lineThickness='2' showValues='0' anchorRadius='2' ");
+				strXML.append("divLineAlpha='20' divLineColor='CC3300' divLineIsDashed='1' slantLabels='1' ");
+				strXML.append("showAlternateHGridColor='1' alternateHGridColor='CC3300' shadowAlpha='40' ");
+				strXML.append("labelStep='");
+				strXML.append(1);
+				strXML.append("' numvdivlines='15' chartRightMargin='35' chartLeftMargin='35' formatNumberScale='0' ");
+				strXML.append("bgColor='FFFFFF,CC3300' bgAngle='270' bgAlpha='10,10' alternateHGridAlpha='5' numberSuffix='' yAxisName='各筛分通过质量百分率(%)'> ");
+				strXML.append("<categories>");
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper1()).length()>0){
+					strXML.append("<category label='0.075'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper2()).length()>0){
+					strXML.append("<category label='0.15'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper3()).length()>0){
+					strXML.append("<category label='0.3'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper4()).length()>0){
+					strXML.append("<category label='0.6'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper5()).length()>0){
+					strXML.append("<category label='1.18'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper6()).length()>0){
+					strXML.append("<category label='2.36'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper7()).length()>0){
+					strXML.append("<category label='4.75'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper8()).length()>0){
+					strXML.append("<category label='9.5'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper9()).length()>0){
+					strXML.append("<category label='13.2'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper10()).length()>0){
+					strXML.append("<category label='16'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper11()).length()>0){
+					strXML.append("<category label='19'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper12()).length()>0){
+					strXML.append("<category label='26.5'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper13()).length()>0){
+					strXML.append("<category label='31.5'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper14()).length()>0){
+					strXML.append("<category label='37.5'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper15()).length()>0){
+					strXML.append("<category label='53'/>");
+				}
+				strXML.append("</categories>");
+			
+				strXML.append("<dataset seriesName='-允许波动上限-' Color='#FF0000' anchorRadius='0' lineThickness='0.1'>");
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper1()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMaxpassper1()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper2()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMaxpassper2()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper3()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMaxpassper3()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper4()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMaxpassper4()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper5()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMaxpassper5()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper6()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMaxpassper6()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper7()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMaxpassper7()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper8()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMaxpassper8()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper9()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMaxpassper9()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper10()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMaxpassper10()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper11()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMaxpassper11()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper12()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMaxpassper12()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper13()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMaxpassper13()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper14()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMaxpassper14()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper15()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMaxpassper15()+"'/>");
+				}
+				strXML.append("</dataset>");
+				
+				strXML.append("<dataset seriesName='-允许波动下限-' Color='#FF0000' anchorRadius='0' lineThickness='0.1'> ");
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper1()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMinpassper1()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper2()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMinpassper2()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper3()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMinpassper3()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper4()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMinpassper4()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper5()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMinpassper5()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper6()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMinpassper6()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper7()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMinpassper7()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper8()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMinpassper8()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper9()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMinpassper9()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper10()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMinpassper10()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper11()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMinpassper11()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper12()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMinpassper12()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper13()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMinpassper13()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper14()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMinpassper14()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper15()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getMinpassper15()+"'/>");
+				}
+				strXML.append("</dataset>");
+				
+				strXML.append("<dataset seriesName='-标准级配-' color='#00EC00'>");
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper1()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getStandPassper1()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper2()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getStandPassper2()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper3()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getStandPassper3()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper4()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getStandPassper4()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper5()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getStandPassper5()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper6()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getStandPassper6()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper7()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getStandPassper7()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper8()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getStandPassper8()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper9()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getStandPassper9()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper10()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getStandPassper10()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper11()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getStandPassper11()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper12()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getStandPassper12()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper13()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getStandPassper13()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper14()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getStandPassper14()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper15()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getStandPassper15()+"'/>");
+				}
+				strXML.append("</dataset>");
+				
+				
+				strXML.append("<dataset seriesName='-实际级配-' color='#0000E3'>");
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper1()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getPassper1()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper2()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getPassper2()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper3()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getPassper3()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper4()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getPassper4()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper5()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getPassper5()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper6()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getPassper6()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper7()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getPassper7()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper8()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getPassper8()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper9()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getPassper9()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper10()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getPassper10()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper11()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getPassper11()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper12()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getPassper12()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper13()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getPassper13()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper14()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getPassper14()+"'/>");
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper15()).length()>0){
+					strXML.append("<set value='"+sfjieguo.getPassper15()+"'/>");
+				}
+				strXML.append("</dataset>");
+				//预警上限(标准级配+预警误差值上限)
+				strXML.append("<dataset seriesName='-预警上限-' color='#FFFF00' anchorRadius='0' dashed='1'>");
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper1()).length()>0){
+					try {
+						Double yjsx=Double.valueOf(sfjieguo.getStandPassper1())+Double.valueOf(swsfsmshigh.getPassper1());
+						strXML.append("<set value='"+yjsx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper2()).length()>0){
+					try {
+						Double yjsx=Double.valueOf(sfjieguo.getStandPassper2())+Double.valueOf(swsfsmshigh.getPassper2());
+						strXML.append("<set value='"+yjsx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper3()).length()>0){
+					try {
+						Double yjsx=Double.valueOf(sfjieguo.getStandPassper3())+Double.valueOf(swsfsmshigh.getPassper3());
+						strXML.append("<set value='"+yjsx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper4()).length()>0){
+					try {
+						Double yjsx=Double.valueOf(sfjieguo.getStandPassper4())+Double.valueOf(swsfsmshigh.getPassper4());
+						strXML.append("<set value='"+yjsx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper5()).length()>0){
+					try {
+						Double yjsx=Double.valueOf(sfjieguo.getStandPassper5())+Double.valueOf(swsfsmshigh.getPassper5());
+						strXML.append("<set value='"+yjsx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper6()).length()>0){
+					try {
+						Double yjsx=Double.valueOf(sfjieguo.getStandPassper6())+Double.valueOf(swsfsmshigh.getPassper6());
+						strXML.append("<set value='"+yjsx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper7()).length()>0){
+					try {
+						Double yjsx=Double.valueOf(sfjieguo.getStandPassper7())+Double.valueOf(swsfsmshigh.getPassper7());
+						strXML.append("<set value='"+yjsx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper8()).length()>0){
+					try {
+						Double yjsx=Double.valueOf(sfjieguo.getStandPassper8())+Double.valueOf(swsfsmshigh.getPassper8());
+						strXML.append("<set value='"+yjsx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper9()).length()>0){
+					try {
+						Double yjsx=Double.valueOf(sfjieguo.getStandPassper9())+Double.valueOf(swsfsmshigh.getPassper9());
+						strXML.append("<set value='"+yjsx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper10()).length()>0){
+					try {
+						Double yjsx=Double.valueOf(sfjieguo.getStandPassper10())+Double.valueOf(swsfsmshigh.getPassper10());
+						strXML.append("<set value='"+yjsx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper11()).length()>0){
+					try {
+						Double yjsx=Double.valueOf(sfjieguo.getStandPassper11())+Double.valueOf(swsfsmshigh.getPassper11());
+						strXML.append("<set value='"+yjsx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper12()).length()>0){
+					try {
+						Double yjsx=Double.valueOf(sfjieguo.getStandPassper12())+Double.valueOf(swsfsmshigh.getPassper12());
+						strXML.append("<set value='"+yjsx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper13()).length()>0){
+					try {
+						Double yjsx=Double.valueOf(sfjieguo.getStandPassper13())+Double.valueOf(swsfsmshigh.getPassper13());
+						strXML.append("<set value='"+yjsx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper14()).length()>0){
+					try {
+						Double yjsx=Double.valueOf(sfjieguo.getStandPassper14())+Double.valueOf(swsfsmshigh.getPassper14());
+						strXML.append("<set value='"+yjsx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper15()).length()>0){
+					try {
+						Double yjsx=Double.valueOf(sfjieguo.getStandPassper15())+Double.valueOf(swsfsmshigh.getPassper15());
+						strXML.append("<set value='"+yjsx+"'/>");
+					}catch(Exception e){}
+				}
+				strXML.append("</dataset>");
+				//预警下限
+				strXML.append("<dataset seriesName='-预警下限-' color='#FFFF00' anchorRadius='0' dashed='1'>");
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper1()).length()>0){
+					try {
+						Double yjxx=Double.valueOf(sfjieguo.getStandPassper1())+Double.valueOf(swsfsmslow.getPassper1());
+						strXML.append("<set value='"+yjxx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper2()).length()>0){
+					try {
+						Double yjxx=Double.valueOf(sfjieguo.getStandPassper2())+Double.valueOf(swsfsmslow.getPassper2());
+						strXML.append("<set value='"+yjxx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper3()).length()>0){
+					try {
+						Double yjxx=Double.valueOf(sfjieguo.getStandPassper3())+Double.valueOf(swsfsmslow.getPassper3());
+						strXML.append("<set value='"+yjxx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper4()).length()>0){
+					try {
+						Double yjxx=Double.valueOf(sfjieguo.getStandPassper4())+Double.valueOf(swsfsmslow.getPassper4());
+						strXML.append("<set value='"+yjxx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper5()).length()>0){
+					try {
+						Double yjxx=Double.valueOf(sfjieguo.getStandPassper5())+Double.valueOf(swsfsmslow.getPassper5());
+						strXML.append("<set value='"+yjxx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper6()).length()>0){
+					try {
+						Double yjxx=Double.valueOf(sfjieguo.getStandPassper6())+Double.valueOf(swsfsmslow.getPassper6());
+						strXML.append("<set value='"+yjxx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper7()).length()>0){
+					try {
+						Double yjxx=Double.valueOf(sfjieguo.getStandPassper7())+Double.valueOf(swsfsmslow.getPassper7());
+						strXML.append("<set value='"+yjxx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper8()).length()>0){
+					try {
+						Double yjxx=Double.valueOf(sfjieguo.getStandPassper8())+Double.valueOf(swsfsmslow.getPassper8());
+						strXML.append("<set value='"+yjxx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper9()).length()>0){
+					try {
+						Double yjxx=Double.valueOf(sfjieguo.getStandPassper9())+Double.valueOf(swsfsmslow.getPassper9());
+						strXML.append("<set value='"+yjxx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper10()).length()>0){
+					try {
+						Double yjxx=Double.valueOf(sfjieguo.getStandPassper10())+Double.valueOf(swsfsmslow.getPassper10());
+						strXML.append("<set value='"+yjxx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper11()).length()>0){
+					try {
+						Double yjxx=Double.valueOf(sfjieguo.getStandPassper11())+Double.valueOf(swsfsmslow.getPassper11());
+						strXML.append("<set value='"+yjxx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper12()).length()>0){
+					try {
+						Double yjxx=Double.valueOf(sfjieguo.getStandPassper12())+Double.valueOf(swsfsmslow.getPassper12());
+						strXML.append("<set value='"+yjxx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper13()).length()>0){
+					try {
+						Double yjxx=Double.valueOf(sfjieguo.getStandPassper13())+Double.valueOf(swsfsmslow.getPassper13());
+						strXML.append("<set value='"+yjxx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper14()).length()>0){
+					try {
+						Double yjxx=Double.valueOf(sfjieguo.getStandPassper14())+Double.valueOf(swsfsmslow.getPassper14());
+						strXML.append("<set value='"+yjxx+"'/>");
+					}catch(Exception e){}
+				}
+				if(StringUtil.Null2Blank(sfjieguo.getStandPassper15()).length()>0){
+					try {
+						Double yjxx=Double.valueOf(sfjieguo.getStandPassper15())+Double.valueOf(swsfsmslow.getPassper15());
+						strXML.append("<set value='"+yjxx+"'/>");
+					}catch(Exception e){}
+				}
+				strXML.append("</dataset>");
 
-		strXML.append(" <styles>");
-        strXML.append(" <definition>"); 
-        strXML.append(" <style type='font' name='captionFont' size='12'/>"); 
-        strXML.append(" </definition>"); 
-        strXML.append(" <application>"); 
-        strXML.append(" <apply toObject='Caption' styles='captionFont' />"); 
-        strXML.append(" <apply toObject='SubCaption' styles='SubcaptionFont' />"); 
-        strXML.append(" </application>"); 
-        strXML.append(" </styles>"); 
-        strXML.append(" </chart>");
-        //System.out.println(strXML.toString());
-		return FusionChartsCreator.createChart(StringUtil.getWebrootpath()+"/FusionCharts/MSLine.swf", "",strXML.toString(), "chartshaifenjipei", 650, 450, false, false);
-	}
+				strXML.append(" <styles>");
+		        strXML.append(" <definition>"); 
+		        strXML.append(" <style type='font' name='captionFont' size='12'/>"); 
+		        strXML.append(" </definition>"); 
+		        strXML.append(" <application>"); 
+		        strXML.append(" <apply toObject='Caption' styles='captionFont' />"); 
+		        strXML.append(" <apply toObject='SubCaption' styles='SubcaptionFont' />"); 
+		        strXML.append(" </application>"); 
+		        strXML.append(" </styles>"); 
+		        strXML.append(" </chart>");
+				return FusionChartsCreator.createChart(StringUtil.getWebrootpath()+"/FusionCharts/MSLine.swf", "",strXML.toString(), "chartshaifenjipei", 650, 400, false, false);
+			}
+		
+			//级配曲线下方的表格
+			public String chartJipeiTable(ShaifenjieguoView sfjieguo,Shaifenziduancfg swsfsmslow,Shaifenziduancfg swsfsmshigh){
+				Double wucha1 = Double.valueOf(StringUtil.Null2Zero(sfjieguo.getPassper1()))-Double.valueOf(StringUtil.Null2Zero(sfjieguo.getStandPassper1()));
+				Double wucha2 = Double.valueOf(StringUtil.Null2Zero(sfjieguo.getPassper4()))-Double.valueOf(StringUtil.Null2Zero(sfjieguo.getStandPassper4()));
+				Double wucha3 = Double.valueOf(StringUtil.Null2Zero(sfjieguo.getPassper6()))-Double.valueOf(StringUtil.Null2Zero(sfjieguo.getStandPassper6()));
+				Double wucha4 = Double.valueOf(StringUtil.Null2Zero(sfjieguo.getPassper7()))-Double.valueOf(StringUtil.Null2Zero(sfjieguo.getStandPassper7()));
+				Double wucha5 = Double.valueOf(StringUtil.Null2Zero(sfjieguo.getPassper8()))-Double.valueOf(StringUtil.Null2Zero(sfjieguo.getStandPassper8()));
+				Double wucha6 = Double.valueOf(StringUtil.Null2Zero(sfjieguo.getPassper11()))-Double.valueOf(StringUtil.Null2Zero(sfjieguo.getStandPassper11()));
+				Double wucha7 = Double.valueOf(StringUtil.Null2Zero(sfjieguo.getPassper12()))-Double.valueOf(StringUtil.Null2Zero(sfjieguo.getStandPassper12()));
+				Double wucha8 = Double.valueOf(StringUtil.Null2Zero(sfjieguo.getPassper13()))-Double.valueOf(StringUtil.Null2Zero(sfjieguo.getStandPassper13()));
+				String [] wc = new String [8];
+				Double [] wucha = {wucha1,wucha2,wucha3,wucha4,wucha5,wucha6,wucha7,wucha8};
+				for(int i=0;i<8;i++){
+					try {
+						wc[i] = String.format("%1$.2f",Double.valueOf(wucha[i]));
+					}catch(Exception e){}
+				}
+				String htmlStr="";
+				String [] wc_color = new String [8];
+				//String b="";
+				//给误差（超过预警上下限）加上红色
+				if(Math.abs(Double.valueOf(wc[0]))>Double.valueOf(StringUtil.Null2Zero(swsfsmshigh.getPassper1()))){
+					wc_color[0]="<font color='red'>"+wc[0]+"</font>";
+				}else{
+					wc_color[0]=wc[0];
+				}
+				if(Math.abs(Double.valueOf(wc[1]))>Double.valueOf(StringUtil.Null2Zero(swsfsmshigh.getPassper4()))){
+					wc_color[1]="<font color='red'>"+wc[1]+"</font>";
+				}else{
+					wc_color[1]=wc[1];
+				}
+				if(Math.abs(Double.valueOf(wc[2]))>Double.valueOf(StringUtil.Null2Zero(swsfsmshigh.getPassper6()))){
+					wc_color[2]="<font color='red'>"+wc[2]+"</font>";
+				}else{
+					wc_color[2]=wc[2];
+				}
+				if(Math.abs(Double.valueOf(wc[3]))>Double.valueOf(StringUtil.Null2Zero(swsfsmshigh.getPassper7()))){
+					wc_color[3]="<font color='red'>"+wc[3]+"</font>";
+				}else{
+					wc_color[3]=wc[3];
+				}
+				if(Math.abs(Double.valueOf(wc[4]))>Double.valueOf(StringUtil.Null2Zero(swsfsmshigh.getPassper8()))){
+					wc_color[4]="<font color='red'>"+wc[4]+"</font>";
+				}else{
+					wc_color[4]=wc[4];
+				}
+				if(Math.abs(Double.valueOf(wc[5]))>Double.valueOf(StringUtil.Null2Zero(swsfsmshigh.getPassper11()))){
+					wc_color[5]="<font color='red'>"+wc[5]+"</font>";
+				}else{
+					wc_color[5]=wc[5];
+				}
+				if(Math.abs(Double.valueOf(wc[6]))>Double.valueOf(StringUtil.Null2Zero(swsfsmshigh.getPassper12()))){
+					wc_color[6]="<font color='red'>"+wc[6]+"</font>";
+				}else{
+					wc_color[6]=wc[6];
+				}
+				if(Math.abs(Double.valueOf(wc[7]))>Double.valueOf(StringUtil.Null2Zero(swsfsmshigh.getPassper13()))){
+					wc_color[7]="<font color='red'>"+wc[7]+"</font>";
+				}else{
+					wc_color[7]=wc[7];
+				}
+				
+				htmlStr ="<div align='center'><table id='clothtable' name='clothtable' style='width:650px;' >" +
+						"<tr>" +
+						  "<th align='center' rowspan='3'>级配名称及粒径(mm)" +
+						     "<tr><th colspan='8' align='center'>合成后各筛孔尺寸的通过百分率(%)</th></tr>" +
+						     "<tr><th>0.075</th> <th>0.6</th><th>2.36</th><th>4.75</th><th>9.5</th><th>19</th><th>26.5</th><th>31.5</th></tr>"+
+				   	      "</th>" +
+				   	    "</tr>" +
+				   	    "<tr align='center'><th width='80px'>标准合成级配</th>" +
+				   	    	"<td>"+String.format("%1$.2f",Double.valueOf(StringUtil.Null2Zero(sfjieguo.getStandPassper1())))+"</td><td>"+String.format("%1$.2f",Double.valueOf(StringUtil.Null2Zero(sfjieguo.getStandPassper4())))+"</td>" +
+				   	    	"<td>"+String.format("%1$.2f",Double.valueOf(StringUtil.Null2Zero(sfjieguo.getStandPassper6())))+"</td><td>"+String.format("%1$.2f",Double.valueOf(StringUtil.Null2Zero(sfjieguo.getStandPassper7())))+"</td>" +
+				   	    	"<td>"+String.format("%1$.2f",Double.valueOf(StringUtil.Null2Zero(sfjieguo.getStandPassper8())))+"</td><td>"+String.format("%1$.2f",Double.valueOf(StringUtil.Null2Zero(sfjieguo.getStandPassper11())))+"</td>" +
+				   	    	"<td>"+String.format("%1$.2f",Double.valueOf(StringUtil.Null2Zero(sfjieguo.getStandPassper12())))+"</td><td>"+String.format("%1$.2f",Double.valueOf(StringUtil.Null2Zero(sfjieguo.getStandPassper13())))+"</td>" +
+				   	    "</tr>" +
+				   	    "<tr align='center'><th width='80px'>实际合成级配</th>" +
+				   	       "<td>"+String.format("%1$.2f",Double.valueOf(StringUtil.Null2Zero(sfjieguo.getPassper1())))+"</td><td>"+String.format("%1$.2f",Double.valueOf(StringUtil.Null2Zero(sfjieguo.getPassper4())))+"</td>" +
+				   	       	"<td>"+String.format("%1$.2f",Double.valueOf(StringUtil.Null2Zero(sfjieguo.getPassper6())))+"</td><td>"+String.format("%1$.2f",Double.valueOf(StringUtil.Null2Zero(sfjieguo.getPassper7())))+"</td>" +
+				   	       	"<td>"+String.format("%1$.2f",Double.valueOf(StringUtil.Null2Zero(sfjieguo.getPassper8())))+"</td><td>"+String.format("%1$.2f",Double.valueOf(StringUtil.Null2Zero(sfjieguo.getPassper11())))+"</td>" +
+				   	       	"<td>"+String.format("%1$.2f",Double.valueOf(StringUtil.Null2Zero(sfjieguo.getPassper12())))+"</td><td>"+String.format("%1$.2f",Double.valueOf(StringUtil.Null2Zero(sfjieguo.getPassper13())))+"</td>" +
+				   	    "</tr>" +
+				   	    "<tr align='center'><th width='80px'>误差(%)</th>"+
+				   	    	"<td>"+wc_color[0]+"</td><td>"+wc_color[1]+"</td><td>"+wc_color[2]+"</td><td>"+wc_color[3]+"</td><td>"+wc_color[4]+"</td><td>"+wc_color[5]+"</td><td>"+wc_color[6]+"</td><td>"+wc_color[7]+"</td>" +
+				   	    "</tr>" +
+				   	    "<tr align='center'><th width='80px'>预警值(%)</th>" +
+				   	    	"<td>"+swsfsmslow.getPassper1()+"~"+swsfsmshigh.getPassper1()+"</td>" +
+				   	    	"<td>"+swsfsmslow.getPassper4()+"~"+swsfsmshigh.getPassper4()+"</td>" +
+				   	    	"<td>"+swsfsmslow.getPassper6()+"~"+swsfsmshigh.getPassper6()+"</td>" +
+				   	    	"<td>"+swsfsmslow.getPassper7()+"~"+swsfsmshigh.getPassper7()+"</td>" +
+				   	    	"<td>"+swsfsmslow.getPassper8()+"~"+swsfsmshigh.getPassper8()+"</td>" +
+				   	    	"<td>"+swsfsmslow.getPassper11()+"~"+swsfsmshigh.getPassper11()+"</td>" +
+				   	    	"<td>"+swsfsmslow.getPassper12()+"~"+swsfsmshigh.getPassper12()+"</td>" +
+				   	    	"<td>"+swsfsmslow.getPassper13()+"~"+swsfsmshigh.getPassper13()+"</td>" +
+				   	    "</tr>" +
+				   	    "</table></div>";
+				return htmlStr;
+			}
 	
 	public String chartLqJipeipic(LqshaifenjieguoView sfjieguo){
 		StringBuilder strXML = new StringBuilder("");

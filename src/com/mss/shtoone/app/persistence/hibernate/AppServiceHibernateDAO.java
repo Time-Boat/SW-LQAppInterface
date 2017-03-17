@@ -153,7 +153,7 @@ public class AppServiceHibernateDAO {
 
 	// 水稳材料统计
 	public ShuiwenphbView appSwmateriallist(String startTime, String endTime, String shebeibianhao, Integer biaoduan,
-			Integer xiangmubu, String fn, int bsid) {
+			Integer xiangmubu, String fn, Integer bsid) {
 		return swmanualphbViewDao.appSwmateriallist(startTime, endTime, shebeibianhao, biaoduan, xiangmubu, fn, bsid);
 	}
 

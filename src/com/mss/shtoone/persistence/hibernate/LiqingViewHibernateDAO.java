@@ -607,7 +607,7 @@ LiqingViewDAO {
 	
 	@Override
 	public LiqingView lqstatisticsinfo() {
-		LiqingView _returnValue=new LiqingView();;
+		LiqingView _returnValue=new LiqingView();
 		
 		ResultSet rs = null;
 		Statement st = null;

@@ -21,6 +21,7 @@ import com.mss.shtoone.domain.Biaoduanxinxi;
 import com.mss.shtoone.domain.GenericPageMode;
 import com.mss.shtoone.domain.ShaifenjieguoView;
 import com.mss.shtoone.domain.Shaifenshiyan;
+import com.mss.shtoone.domain.Shaifenziduancfg;
 import com.mss.shtoone.domain.ShuiwenxixxlilunView;
 import com.mss.shtoone.domain.Shuiwenziduancfg;
 import com.mss.shtoone.domain.TopLiqingView;
@@ -1052,7 +1053,14 @@ public class ShaifenshiyanAction extends ActionSupport{
 		if(xxid!=null){
 			ShaifenjieguoView sfjieguoView=shaifenService.getShaifenjieguoViewByswId(xxid);
 			if(sfjieguoView!=null){
-				xmlStr=getDataService.chartJipeipic(sfjieguoView);
+//				xmlStr=getDataService.chartJipeipic(sfjieguoView);
+				String sf_shebeibianhao = sfjieguoView.getGprsbianhao();
+				Shaifenziduancfg swsfsmslow = sysService.swjpsmslowfindBybh(sf_shebeibianhao);
+				Shaifenziduancfg swsfsmshigh = sysService.swjpsmshighfindBybh(sf_shebeibianhao);
+				
+				xmlStr=getDataService.chartJipeipic(sfjieguoView,swsfsmslow,swsfsmshigh);
+				xmlStr +=getDataService.chartJipeiTable(sfjieguoView,swsfsmslow,swsfsmshigh);//添加曲线下方表格
+				
 			}else{
 				xmlStr="<div style='font-size:26px;margin-top:123px;margin-left:65px;color:red;position: relative;'>请输入理论配合比,并填写筛分试验！</div>";
 			}

@@ -653,7 +653,7 @@ public class AppInterfaceAction extends BaseAction {
 		String cllx = request.getParameter("cllx"); // 处理类型 0 全部 1 未处理 2 已处理 3
 													// 未审批 4 已审批
 
-		if (!StringUtil.isNotEmpty(departType) || !StringUtil.isNotEmpty(biaoshiid)) {
+		if (!StringUtil.isNotEmpty(departType) && !StringUtil.isNotEmpty(biaoshiid)) {
 			returnJsonObj.put("description", "departType或者biaoshiid为空");
 			returnJsonObj.put("success", false);
 			responseOutWrite(response, returnJsonObj);
@@ -772,7 +772,7 @@ public class AppInterfaceAction extends BaseAction {
 		String endTime = request.getParameter("endTime");// 结束时间(时间戳)
 		String shebeibianhao = request.getParameter("shebeibianhao");
 
-		if (!StringUtil.isNotEmpty(departType) || !StringUtil.isNotEmpty(biaoshiid)) {
+		if (!StringUtil.isNotEmpty(departType) && !StringUtil.isNotEmpty(biaoshiid)) {
 			returnJsonObj.put("description", "departType或者biaoshiid为空");
 			returnJsonObj.put("success", false);
 			responseOutWrite(response, returnJsonObj);
@@ -791,7 +791,7 @@ public class AppInterfaceAction extends BaseAction {
 		}
 
 		Integer a = departType == "" || departType == null ? null : Integer.valueOf(departType);
-		Integer b = biaoshiid == "" || biaoshiid == null ? null : Integer.valueOf(biaoshiid);
+		Integer b = biaoshiid == "" || biaoshiid == null ? null : Integer.valueOf(biaoshiid); // 不赋值的话会报错
 
 		ShuiwenphbView swp = appSystemService.appSwmateriallist(startTime, endTime, shebeibianhao, null, null,
 				StringUtil.getQueryFieldNameByUserType(a), b);
@@ -844,7 +844,7 @@ public class AppInterfaceAction extends BaseAction {
 
 		// 头信息
 		SWXQHeadInfoEntity swHead = new SWXQHeadInfoEntity();
-		swHead.setBaocunshijian(sw.getBaocunshijian());
+		swHead.setBaocunshijian(sw.getCaijishijian());
 		swHead.setBhjName(sw.getBanhezhanminchen());
 		swHead.setChuliaoshijian(sw.getShijian());
 		swHead.setZcl(sw.getGlchangliang());

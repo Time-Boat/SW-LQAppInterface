@@ -22,7 +22,7 @@ public interface ShuiwenmanualphbViewDAO extends GenericDAO<ShuiwenmanualphbView
 			Integer xiangmubu, String fn, int bsid);
 	
 	public ShuiwenphbView appSwmateriallist(String startTime,String endTime,String shebeibianhao, Integer biaoduan, 
-			Integer xiangmubu, String fn, int bsid);
+			Integer xiangmubu, String fn, Integer bsid);
 	
 }
 

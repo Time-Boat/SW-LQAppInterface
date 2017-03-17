@@ -206,26 +206,26 @@ ShuiwenmanualphbViewDAO {
 						
 						//揭博业主要求为实际配合比与目标配合比进行比对，出误差
 						try {
-							hv.setWgl1(String.format("%1$.1f", rs.getFloat("manualwgl1")));
+							hv.setWgl1(String.format("%1$.1f", rs.getFloat("wgl1")));
 						} catch (Exception e) {}
 						try {
-							hv.setWgl2(String.format("%1$.1f", rs.getFloat("manualwgl2")));
+							hv.setWgl2(String.format("%1$.1f", rs.getFloat("wgl2")));
 						} catch (Exception e) {}
 						try {
-							hv.setWgl3(String.format("%1$.1f", rs.getFloat("manualwgl3")));
+							hv.setWgl3(String.format("%1$.1f", rs.getFloat("wgl3")));
 						} catch (Exception e) {}
 						try {
-							hv.setWgl4(String.format("%1$.1f", rs.getFloat("manualwgl4")));
+							hv.setWgl4(String.format("%1$.1f", rs.getFloat("wgl4")));
 						} catch (Exception e) {}
 						try {
-							hv.setWgl5(String.format("%1$.1f", rs.getFloat("manualwgl5")));
+							hv.setWgl5(String.format("%1$.1f", rs.getFloat("wgl5")));
 						} catch (Exception e) {}
 						
 						try {
-							hv.setWfl1(String.format("%1$.2f", rs.getFloat("manualwfl1")));
+							hv.setWfl1(String.format("%1$.2f", rs.getFloat("wfl1")));
 						} catch (Exception e) {}
 						try {
-							hv.setWfl2(String.format("%1$.2f", rs.getFloat("manualwfl2")));
+							hv.setWfl2(String.format("%1$.2f", rs.getFloat("wfl2")));
 						} catch (Exception e) {}
 						//目标理论配比
 						hv.setLlg1(rs.getString("llg1"));
@@ -584,26 +584,26 @@ ShuiwenmanualphbViewDAO {
 						} catch (Exception e) {}				
 						
 						try {
-							hv.setWgl1(String.format("%1$.1f", rs.getFloat("manualwgl1")));
+							hv.setWgl1(String.format("%1$.1f", rs.getFloat("wgl1")));
 						} catch (Exception e) {}
 						try {
-							hv.setWgl2(String.format("%1$.1f", rs.getFloat("manualwgl2")));
+							hv.setWgl2(String.format("%1$.1f", rs.getFloat("wgl2")));
 						} catch (Exception e) {}
 						try {
-							hv.setWgl3(String.format("%1$.1f", rs.getFloat("manualwgl3")));
+							hv.setWgl3(String.format("%1$.1f", rs.getFloat("wgl3")));
 						} catch (Exception e) {}
 						try {
-							hv.setWgl4(String.format("%1$.1f", rs.getFloat("manualwgl4")));
+							hv.setWgl4(String.format("%1$.1f", rs.getFloat("wgl4")));
 						} catch (Exception e) {}
 						try {
-							hv.setWgl5(String.format("%1$.1f", rs.getFloat("manualwgl5")));
+							hv.setWgl5(String.format("%1$.1f", rs.getFloat("wgl5")));
 						} catch (Exception e) {}
 						
 						try {
-							hv.setWfl1(String.format("%1$.2f", rs.getFloat("manualwfl1")));
+							hv.setWfl1(String.format("%1$.2f", rs.getFloat("wfl1")));
 						} catch (Exception e) {}
 						try {
-							hv.setWfl2(String.format("%1$.2f", rs.getFloat("manualwfl2")));
+							hv.setWfl2(String.format("%1$.2f", rs.getFloat("wfl2")));
 						} catch (Exception e) {}
 					
 						//目标理论配比
@@ -833,7 +833,7 @@ ShuiwenmanualphbViewDAO {
 	
 	//app接口新增方法
 	public ShuiwenphbView appSwmateriallist(String startTime,String endTime,String shebeibianhao, Integer biaoduan, 
-			Integer xiangmubu, String fn, int bsid){
+			Integer xiangmubu, String fn, Integer bsid){
 		ShuiwenphbView swphb=null;
 		StringBuffer sql = new StringBuffer();
 		appendmanualSql(sql);

@@ -41,6 +41,7 @@ import com.mss.shtoone.domain.Lqshaifenjieguo;
 import com.mss.shtoone.domain.Lqshaifenshiyan;
 import com.mss.shtoone.domain.Shaifenjieguo;
 import com.mss.shtoone.domain.Shaifenshiyan;
+import com.mss.shtoone.domain.Shaifenziduancfg;
 import com.mss.shtoone.domain.ShuiwenmanualphbView;
 import com.mss.shtoone.domain.ShuiwenphbView;
 import com.mss.shtoone.domain.Shuiwentongji;
@@ -93,6 +94,7 @@ import com.mss.shtoone.persistence.LiqingxixxmaxDAO;
 import com.mss.shtoone.persistence.LiqingziduancfgDAO;
 import com.mss.shtoone.persistence.LiqingziduancfgViewDAO;
 import com.mss.shtoone.persistence.LqshaifenjieguoDAO;
+import com.mss.shtoone.persistence.ShaifenziduancfgDAO;
 import com.mss.shtoone.persistence.ShuiwentongjiDAO;
 import com.mss.shtoone.persistence.ShuiwenxixxjieguoDAO;
 import com.mss.shtoone.persistence.ShuiwenxixxlilunDAO;
@@ -296,6 +298,9 @@ public class SystemService {
 	
 	@Autowired
 	private YezhuFileDAO yezhuFileDAO;
+	
+	@Autowired
+	private ShaifenziduancfgDAO sfzdDAO;
 	
 	public List<HandSet> handsetlist(Integer biaoduan) {
 		if (null != biaoduan) {
@@ -4251,5 +4256,64 @@ public class SystemService {
 				lqDAO.saveOrUpdate(lqxx);
 			}
 		}
+	}
+	
+	public Shaifenziduancfg swjpsmslowfindBybh(String gprsbh) {
+		Shaifenziduancfg jpsmslowcfg = sfzdDAO.findByGprsbhandleixin(gprsbh, "5");
+		if (null == jpsmslowcfg) {
+			jpsmslowcfg = getDefaultjpsmslowswcfg(gprsbh);
+		}
+		return jpsmslowcfg;
+	}
+    public Shaifenziduancfg getDefaultjpsmslowswcfg(String gprsbh) {
+		Shaifenziduancfg swhcjpissmscfg = new Shaifenziduancfg();
+		swhcjpissmscfg.setLeixing("5");
+		swhcjpissmscfg.setGprsbianhao(gprsbh);
+		swhcjpissmscfg.setPassper1("-2");
+		swhcjpissmscfg.setPassper2("-4");
+		swhcjpissmscfg.setPassper3("-4");
+		swhcjpissmscfg.setPassper4("-4");
+		swhcjpissmscfg.setPassper5("-4");
+		swhcjpissmscfg.setPassper6("-4");
+		swhcjpissmscfg.setPassper7("-6");
+		swhcjpissmscfg.setPassper8("-6");
+		swhcjpissmscfg.setPassper9("-6");
+		swhcjpissmscfg.setPassper10("-6");
+		swhcjpissmscfg.setPassper11("-6");
+		swhcjpissmscfg.setPassper12("-6");
+		swhcjpissmscfg.setPassper13("-6");
+		swhcjpissmscfg.setPassper14("-6");
+		swhcjpissmscfg.setPassper15("-6");
+		return swhcjpissmscfg;
+	}
+    
+    public Shaifenziduancfg swjpsmshighfindBybh(String gprsbh) {
+		Shaifenziduancfg jpsmshighcfg = sfzdDAO.findByGprsbhandleixin(gprsbh, "6");
+		if (null == jpsmshighcfg) {
+			jpsmshighcfg = getDefaultjpsmshighswcfg(gprsbh);
+		}
+		return jpsmshighcfg;
+	}
+    
+    public Shaifenziduancfg getDefaultjpsmshighswcfg(String gprsbh) {
+		Shaifenziduancfg swhcjpissmscfg = new Shaifenziduancfg();
+		swhcjpissmscfg.setLeixing("6");
+		swhcjpissmscfg.setGprsbianhao(gprsbh);
+		swhcjpissmscfg.setPassper1("2");
+		swhcjpissmscfg.setPassper2("4");
+		swhcjpissmscfg.setPassper3("4");
+		swhcjpissmscfg.setPassper4("4");
+		swhcjpissmscfg.setPassper5("4");
+		swhcjpissmscfg.setPassper6("4");
+		swhcjpissmscfg.setPassper7("6");
+		swhcjpissmscfg.setPassper8("6");
+		swhcjpissmscfg.setPassper9("6");
+		swhcjpissmscfg.setPassper10("6");
+		swhcjpissmscfg.setPassper11("6");
+		swhcjpissmscfg.setPassper12("6");
+		swhcjpissmscfg.setPassper13("6");
+		swhcjpissmscfg.setPassper14("6");
+		swhcjpissmscfg.setPassper15("6");
+		return swhcjpissmscfg;
 	}
 }

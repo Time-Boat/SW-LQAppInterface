@@ -4852,7 +4852,7 @@ public class QueryService {
 	//水稳配合比误差走势图---与采集到的配比做对比
 	public String getSwphbwcXml(List<ShuiwenmanualphbView> swmanualphb,ShuiwenziduancfgView swField,ShuiwenziduancfgView swzstisShow) {
 		StringBuilder strXML = new StringBuilder("");
-		strXML.append("<?xml version='1.0' encoding='utf-8'?><chart caption='误差走势图(%)' subcaption='(");
+		strXML.append("<?xml version='1.0' encoding='utf-8'?><chart caption='配比误差走势图(%)' subcaption='(");
 		strXML.append(swmanualphb.get(0).getBaocunshijian());
 		strXML.append("至");
 		strXML.append(swmanualphb.get(swmanualphb.size()-1).getBaocunshijian());

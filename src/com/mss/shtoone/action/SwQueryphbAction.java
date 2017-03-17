@@ -458,6 +458,7 @@ public class SwQueryphbAction extends ActionSupport {
 				if(StringUtil.Null2Blank(swisShow.getSjfl1()).equalsIgnoreCase("1")){
 					headerList.add(StringUtil.Null2Blank(swField.getSjfl1()));
 				}
+//				headerList.add(StringUtil.Null2Blank(swField.getSjfl2()));
 				if(StringUtil.Null2Blank(swisShow.getSjfl2()).equalsIgnoreCase("1")){
 					headerList.add(StringUtil.Null2Blank(swField.getSjfl2()));
 				}
@@ -484,26 +485,34 @@ public class SwQueryphbAction extends ActionSupport {
 						StringBuilder databuilder = new StringBuilder();
 						databuilder.append(StringUtil.Null2Blank(swmanualphbObj.getBanhezhanminchen()) + "&^&");
 						databuilder.append(StringUtil.Null2Blank(swmanualphbObj.getShijian()) + "&^&");
-						databuilder.append(StringUtil.Null2Blank(swmanualphbObj.getSjgl1()) + "&^&");
-						databuilder.append(StringUtil.Null2Blank(swmanualphbObj.getSjgl2()) + "&^&");
-						databuilder.append(StringUtil.Null2Blank(swmanualphbObj.getSjgl3()) + "&^&");
-						databuilder.append(StringUtil.Null2Blank(swmanualphbObj.getSjgl4()) + "&^&");
-						databuilder.append(StringUtil.Null2Blank(swmanualphbObj.getSjfl1()) + "&^&");
-						databuilder.append(StringUtil.Null2Blank(swmanualphbObj.getPersjgl1()) + "&^&");
-						databuilder.append(StringUtil.Null2Blank(swmanualphbObj.getPersjgl2()) + "&^&");
-						databuilder.append(StringUtil.Null2Blank(swmanualphbObj.getPersjgl3()) + "&^&");
-						databuilder.append(StringUtil.Null2Blank(swmanualphbObj.getPersjgl4()) + "&^&");
-						databuilder.append(StringUtil.Null2Blank(swmanualphbObj.getPersjfl1()) + "&^&");
-						databuilder.append(StringUtil.Null2Blank(swmanualphbObj.getLlg1()) + "&^&");
-						databuilder.append(StringUtil.Null2Blank(swmanualphbObj.getLlg2()) + "&^&");
-						databuilder.append(StringUtil.Null2Blank(swmanualphbObj.getLlg3()) + "&^&");
-						databuilder.append(StringUtil.Null2Blank(swmanualphbObj.getLlg4()) + "&^&");
-						databuilder.append(StringUtil.Null2Blank(swmanualphbObj.getLlf1()) + "&^&");
-						databuilder.append(StringUtil.Null2Blank(swmanualphbObj.getManualwgl1()) + "&^&");
-						databuilder.append(StringUtil.Null2Blank(swmanualphbObj.getManualwgl2()) + "&^&");
-						databuilder.append(StringUtil.Null2Blank(swmanualphbObj.getManualwgl3()) + "&^&");
-						databuilder.append(StringUtil.Null2Blank(swmanualphbObj.getManualwgl4()) + "&^&");
-						databuilder.append(StringUtil.Null2Blank(swmanualphbObj.getManualwfl1()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getSjgl1()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getSjgl2()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getSjgl3()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getSjgl4()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getSjgl5()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getSjfl1()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getSjfl2()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getPersjgl1()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getPersjgl2()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getPersjgl3()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getPersjgl4()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getPersjgl5()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getPersjfl1()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getPersjfl2()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getLlgl1()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getLlgl2()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getLlgl3()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getLlgl4()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getLlgl5()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getLlfl1()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getLlfl2()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getWgl1()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getWgl2()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getWgl3()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getWgl4()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getWgl5()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getWfl1()) + "&^&");
+						databuilder.append(StringUtil.Null2Zero(swmanualphbObj.getWfl2()) + "&^&");
 						dataList.add(databuilder.toString());
 					}
 				}

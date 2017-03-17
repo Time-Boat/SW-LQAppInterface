@@ -1,4 +1,4 @@
-package com.mss.shtoone.app.persistence.hibernate;
+package com.mss.shtoone.app.persistence.hibernate.lq;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
