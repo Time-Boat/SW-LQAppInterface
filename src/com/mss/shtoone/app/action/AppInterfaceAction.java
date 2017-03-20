@@ -1,5 +1,9 @@
 package com.mss.shtoone.app.action;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -20,7 +24,7 @@ import com.mss.shtoone.app.domain.AppSWMaterialEntity;
 import com.mss.shtoone.app.domain.BhzInfoEntity;
 import com.mss.shtoone.app.domain.SWChaobiaoCZSHInfo;
 import com.mss.shtoone.app.domain.SWChaobiaoItemEntity;
-import com.mss.shtoone.app.domain.SWMaterialStatisticsData;
+import com.mss.shtoone.app.domain.SWDataQueryEntity;
 import com.mss.shtoone.app.domain.SWWraningStatisticsEntity;
 import com.mss.shtoone.app.domain.SWXQHeadInfoEntity;
 import com.mss.shtoone.app.persistence.hibernate.AppServiceHibernateDAO;
@@ -29,10 +33,11 @@ import com.mss.shtoone.domain.Biaoduanxinxi;
 import com.mss.shtoone.domain.GenericPageMode;
 import com.mss.shtoone.domain.Muser;
 import com.mss.shtoone.domain.Role;
+import com.mss.shtoone.domain.ShaifenjieguoView;
+import com.mss.shtoone.domain.Shaifenziduancfg;
 import com.mss.shtoone.domain.ShuiwenmanualphbView;
 import com.mss.shtoone.domain.ShuiwenphbView;
 import com.mss.shtoone.domain.ShuiwenxixxView;
-import com.mss.shtoone.domain.Shuiwenxixxdanjia;
 import com.mss.shtoone.domain.Shuiwenxixxjieguo;
 import com.mss.shtoone.domain.ShuiwenziduancfgView;
 import com.mss.shtoone.domain.Xiangmubuxinxi;
@@ -47,6 +52,7 @@ import com.opensymphony.xwork2.ActionContext;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.dispatcher.multipart.MultiPartRequestWrapper;
 
 /**
  * APP数据接口处理类
@@ -121,17 +127,27 @@ public class AppInterfaceAction extends BaseAction {
 						for (Role r : list) {
 							sbf.append(r.getId() + ",");
 						}
-						// 2 16 17 18 19
-						boolean a = sbf.toString().contains(",2");
-						boolean b = sbf.toString().contains(",16");
-						boolean c = sbf.toString().contains(",17");
-						boolean d = sbf.toString().contains(",18");
-						boolean e = sbf.toString().contains(",19");
 
-						// 0:没有审核全选 1:有审核权限
-						returnJsonObj.put("shenehe", 0);
-						if (a && b && c && d && e) {
+						// 2 16 17 18 19
+						boolean a = sbf.toString().contains("2,");
+						boolean b = sbf.toString().contains("16,");
+						boolean c = sbf.toString().contains("17,");
+						boolean d = sbf.toString().contains("18,");
+						boolean e = sbf.toString().contains("19,");
+						boolean f = sbf.toString().contains("12,");
+
+						// 0:没有处置权限 1:有处置权限
+						if (a && b && d && f) {
+							returnJsonObj.put("chuzhi", 1);
+						} else {
+							returnJsonObj.put("chuzhi", 0);
+						}
+
+						// 0:没有审核权限 1:有审核权限
+						if (a && c && d && e) {
 							returnJsonObj.put("shenehe", 1);
+						} else {
+							returnJsonObj.put("shenehe", 0);
 						}
 
 						returnJsonObj.put("success", true);
@@ -155,6 +171,7 @@ public class AppInterfaceAction extends BaseAction {
 		responseOutWrite(response, returnJsonObj);
 	}
 
+	// 组织机构树
 	@Action("departTree")
 	public void departTree() {
 		ActionContext context = ActionContext.getContext();
@@ -632,6 +649,202 @@ public class AppInterfaceAction extends BaseAction {
 		responseOutWrite(response, returnJsonObj);
 	}
 
+	// 历史数据查询
+	@Action("appSwcllist")
+	public void appSwcllist() {
+		ActionContext context = ActionContext.getContext();
+		HttpServletRequest request = (HttpServletRequest) context.get(ServletActionContext.HTTP_REQUEST);
+		HttpServletResponse response = (HttpServletResponse) context.get(ServletActionContext.HTTP_RESPONSE);
+		
+		JsonUtil.responseUTF8(response);
+		JSONObject returnJsonObj = new JSONObject();
+		try {
+			request.setCharacterEncoding("UTF-8");
+			String departType = request.getParameter("departType");
+			String biaoshiid = request.getParameter("biaoshiid");// 标识
+			String startTime = request.getParameter("startTime");// 开始时间(时间戳)
+			String endTime = request.getParameter("endTime");// 结束时间(时间戳)
+			String shebeibianhao = request.getParameter("shebeibianhao");
+			String usePosition = request.getParameter("usePosition");
+
+			if (!StringUtil.isNotEmpty(startTime) && !StringUtil.isNotEmpty(endTime)) {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Calendar day = Calendar.getInstance();
+				endTime = sdf.format(day.getTime());
+				day.add(Calendar.MONTH, -1);
+				startTime = sdf.format(day.getTime());
+			} else {
+				startTime = GetDate.TimetmpConvetDateTime(startTime);// 开始时间
+				endTime = GetDate.TimetmpConvetDateTime(endTime);// 终止时间
+			}
+			
+			int pageNo = 1;
+			if (StringUtil.Null2Blank(request.getParameter("pageNo")).length() > 0) {
+				pageNo = Integer.parseInt(request.getParameter("pageNo"));
+			}
+			int maxPageItems = 15;
+			if (StringUtil.Null2Blank(request.getParameter("maxPageItems")).length() > 0) {
+				maxPageItems = Integer.parseInt(request.getParameter("maxPageItems"));
+			}
+
+			Integer b = biaoshiid == "" || biaoshiid == null ? null : Integer.valueOf(biaoshiid); 
+			
+			GenericPageMode mode = appSystemService.swcllist(shebeibianhao, startTime, endTime, null, null,
+					StringUtil.getQueryFieldNameByUserType(Integer.parseInt(departType)), b, pageNo,
+					maxPageItems, usePosition);
+
+			List<ShuiwenxixxView> swxxList = mode.getDatas();
+			
+			List<SWDataQueryEntity> simplifylist = new ArrayList();
+
+			for (ShuiwenxixxView sw : swxxList) {
+				SWDataQueryEntity sc = new SWDataQueryEntity();
+				sc.setBianhao(sw.getBianhao() + "");
+				sc.setBzhName(sw.getBanhezhanminchen());
+				sc.setClTime(sw.getShijian());
+				sc.setSjf1(sw.getSjfl1());
+				sc.setSjf2(sw.getSjfl2());
+				sc.setSjg1(sw.getSjgl1());
+				sc.setSjg2(sw.getSjgl2());
+				sc.setSjg3(sw.getSjgl3());
+				sc.setSjg4(sw.getSjgl4());
+				sc.setSjg5(sw.getSjgl5());
+				sc.setZcl(sw.getGlchangliang());
+				sc.setSjshui(sw.getSjshui());
+				sc.setUsePosition(sw.getLlbuwei());
+				
+				simplifylist.add(sc);
+			}
+			
+			ShuiwenziduancfgView swziduanfield = queryService.getSwfield(shebeibianhao);
+			ShuiwenziduancfgView swisshow = queryService.getswcfgisShow(shebeibianhao);	
+			
+			SWChaobiaoItemEntity field = swapField(swziduanfield);
+			SWChaobiaoItemEntity show = swapField(swisshow);
+			show.setZcl(swisshow.getGlchangliang());
+			show.setSjshui(swisshow.getSjshui());
+			field.setZcl("总产量");
+			field.setSjshui(swziduanfield.getSjshui());
+			field.setBzhName("拌合站名称");
+			field.setUsePosition("使用部位");
+			
+			returnJsonObj.put("isShow", show);
+			returnJsonObj.put("field", field);
+			returnJsonObj.put("data", simplifylist);
+			returnJsonObj.put("description", "超标处置成功！");
+			returnJsonObj.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("混凝土APP超标处置错误！");
+			returnJsonObj.put("success", false);
+		}
+		responseOutWrite(response, returnJsonObj);
+	}
+
+	// 超标查询详情
+	@Action("appSwclXQ")
+	public void appSwclXQ() {
+
+		ActionContext context = ActionContext.getContext();
+		HttpServletRequest request = (HttpServletRequest) context.get(ServletActionContext.HTTP_REQUEST);
+		HttpServletResponse response = (HttpServletResponse) context.get(ServletActionContext.HTTP_RESPONSE);
+
+		JsonUtil.responseUTF8(response);
+		JSONObject returnJsonObj = new JSONObject();
+
+		String bianhao = request.getParameter("bianhao");
+		String shebeibianhao = request.getParameter("shebeibianhao");
+
+		ShuiwenxixxView swxx = queryService.swxxfindById(Integer.parseInt(bianhao));
+
+		// 头信息
+		SWXQHeadInfoEntity swHead = new SWXQHeadInfoEntity();
+		swHead.setBaocunshijian(swxx.getCaijishijian());
+		swHead.setBhjName(swxx.getBanhezhanminchen());
+		swHead.setChuliaoshijian(swxx.getShijian());
+		swHead.setZcl(swxx.getGlchangliang());
+		
+		try {
+			ShuiwenziduancfgView swziduanfield = queryService.getSwfield(shebeibianhao);
+	
+			ShaifenjieguoView sfjieguoView = appSystemService.getShaifenjieguoViewByswId(Integer.parseInt(bianhao));
+			
+			String sf_shebeibianhao = sfjieguoView.getGprsbianhao();
+			Shaifenziduancfg swsfsmslow = sysService.swjpsmslowfindBybh(sf_shebeibianhao);
+			Shaifenziduancfg swsfsmshigh = sysService.swjpsmshighfindBybh(sf_shebeibianhao);
+		
+			List<AppSWMaterialEntity> asw = bean2List1(swxx, swziduanfield, -1);
+			
+			returnJsonObj.put("swsfsmslow", swsfsmslow);
+			returnJsonObj.put("swsfsmshigh", swsfsmshigh);
+			returnJsonObj.put("sfjieguoView", sfjieguoView);
+			
+			returnJsonObj.put("swHead", swHead);
+			returnJsonObj.put("data", asw);
+			returnJsonObj.put("success", true);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			returnJsonObj.put("data", "[]");
+			returnJsonObj.put("success", false);
+		}
+		responseOutWrite(response, returnJsonObj);
+	}
+
+	// 材料核算
+	@Action("swmaterial")
+	public void swmaterial() {
+		ActionContext context = ActionContext.getContext();
+		HttpServletRequest request = (HttpServletRequest) context.get(ServletActionContext.HTTP_REQUEST);
+		HttpServletResponse response = (HttpServletResponse) context.get(ServletActionContext.HTTP_RESPONSE);
+
+		JsonUtil.responseUTF8(response);
+		JSONObject returnJsonObj = new JSONObject();
+
+		String departType = request.getParameter("departType");
+		String biaoshiid = request.getParameter("biaoshiid");// 标识
+		String startTime = request.getParameter("startTime");// 开始时间(时间戳)
+		String endTime = request.getParameter("endTime");// 结束时间(时间戳)
+		String shebeibianhao = request.getParameter("shebeibianhao");
+
+		if (!StringUtil.isNotEmpty(departType) && !StringUtil.isNotEmpty(biaoshiid)) {
+			returnJsonObj.put("description", "departType或者biaoshiid为空");
+			returnJsonObj.put("success", false);
+			responseOutWrite(response, returnJsonObj);
+			return;
+		}
+
+		if (!StringUtil.isNotEmpty(startTime) && !StringUtil.isNotEmpty(endTime)) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Calendar day = Calendar.getInstance();
+			endTime = sdf.format(day.getTime());
+			day.add(Calendar.MONTH, -1);
+			startTime = sdf.format(day.getTime());
+		} else {
+			startTime = GetDate.TimetmpConvetDateTime(request.getParameter("startTime"));// 开始时间
+			endTime = GetDate.TimetmpConvetDateTime(request.getParameter("endTime"));// 终止时间
+		}
+
+		Integer a = departType == "" || departType == null ? null : Integer.valueOf(departType);
+		Integer b = biaoshiid == "" || biaoshiid == null ? null : Integer.valueOf(biaoshiid); // 不赋值的话会报错
+
+		ShuiwenphbView swp = appSystemService.appSwmateriallist(startTime, endTime, shebeibianhao, null, null,
+				StringUtil.getQueryFieldNameByUserType(a), b);
+
+		ShuiwenziduancfgView swziduanfield = queryService.getSwfield(shebeibianhao);
+
+		List<AppSWMaterialEntity> asw = bean2List1(swp, swziduanfield, -1);
+
+		try {
+			returnJsonObj.put("data", asw);
+			returnJsonObj.put("success", true);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			returnJsonObj.put("data", "[]");
+			returnJsonObj.put("success", false);
+		}
+		responseOutWrite(response, returnJsonObj);
+	}
+
 	// 超标查询
 	@Action("chaoBiaoList")
 	public void chaoBiaoList() {
@@ -743,7 +956,7 @@ public class AppInterfaceAction extends BaseAction {
 		SWChaobiaoItemEntity field = swapField(swziduanfield);
 		SWChaobiaoItemEntity show = swapField(swisshow);
 		show.setZcl(swisshow.getGlchangliang());
-		
+
 		field.setZcl("总产量");
 		field.setBianhao("编号");
 		field.setBzhName("拌合站名称");
@@ -761,61 +974,7 @@ public class AppInterfaceAction extends BaseAction {
 		responseOutWrite(response, returnJsonObj);
 	}
 
-	@Action("swmaterial")
-	public void swmaterial() {
-		ActionContext context = ActionContext.getContext();
-		HttpServletRequest request = (HttpServletRequest) context.get(ServletActionContext.HTTP_REQUEST);
-		HttpServletResponse response = (HttpServletResponse) context.get(ServletActionContext.HTTP_RESPONSE);
-
-		JsonUtil.responseUTF8(response);
-		JSONObject returnJsonObj = new JSONObject();
-
-		String departType = request.getParameter("departType");
-		String biaoshiid = request.getParameter("biaoshiid");// 标识
-		String startTime = request.getParameter("startTime");// 开始时间(时间戳)
-		String endTime = request.getParameter("endTime");// 结束时间(时间戳)
-		String shebeibianhao = request.getParameter("shebeibianhao");
-
-		if (!StringUtil.isNotEmpty(departType) && !StringUtil.isNotEmpty(biaoshiid)) {
-			returnJsonObj.put("description", "departType或者biaoshiid为空");
-			returnJsonObj.put("success", false);
-			responseOutWrite(response, returnJsonObj);
-			return;
-		}
-
-		if (!StringUtil.isNotEmpty(startTime) && !StringUtil.isNotEmpty(endTime)) {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Calendar day = Calendar.getInstance();
-			endTime = sdf.format(day.getTime());
-			day.add(Calendar.MONTH, -1);
-			startTime = sdf.format(day.getTime());
-		} else {
-			startTime = GetDate.TimetmpConvetDateTime(request.getParameter("startTime"));// 开始时间
-			endTime = GetDate.TimetmpConvetDateTime(request.getParameter("endTime"));// 终止时间
-		}
-
-		Integer a = departType == "" || departType == null ? null : Integer.valueOf(departType);
-		Integer b = biaoshiid == "" || biaoshiid == null ? null : Integer.valueOf(biaoshiid); // 不赋值的话会报错
-
-		ShuiwenphbView swp = appSystemService.appSwmateriallist(startTime, endTime, shebeibianhao, null, null,
-				StringUtil.getQueryFieldNameByUserType(a), b);
-
-		ShuiwenziduancfgView swziduanfield = queryService.getSwfield(shebeibianhao);
-
-		List<AppSWMaterialEntity> asw = bean2List1(swp, swziduanfield, -1);
-
-		try {
-			returnJsonObj.put("data", asw);
-			returnJsonObj.put("success", true);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			returnJsonObj.put("data", "[]");
-			returnJsonObj.put("success", false);
-		}
-		responseOutWrite(response, returnJsonObj);
-	}
-
-	// 超标查询
+	// 超标查询详情
 	@Action("chaoBiaoXQ")
 	public void chaoBiaoXQ() {
 
@@ -840,10 +999,13 @@ public class AppInterfaceAction extends BaseAction {
 		simpleJg.setChuliren(swjg.getJianliren());
 		simpleJg.setShenpidate(swjg.getShenpidate());
 		simpleJg.setWentiyuanyin(swjg.getWentiyuanyin());
+		simpleJg.setFilePath(swjg.getFilepath());
 		// 业主
 		simpleJg.setConfirmdate(swjg.getConfirmdate());
 		simpleJg.setYezhuren(swjg.getYezhuren());
 		simpleJg.setYezhuyijian(swjg.getYezhuyijian());
+		simpleJg.setBeizhu(swjg.getBeizhu());
+		simpleJg.setBeizhu(swjg.getBeizhu());
 		simpleJg.setBeizhu(swjg.getBeizhu());
 
 		// 头信息
@@ -865,6 +1027,167 @@ public class AppInterfaceAction extends BaseAction {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			returnJsonObj.put("data", "[]");
+			returnJsonObj.put("success", false);
+		}
+		responseOutWrite(response, returnJsonObj);
+	}
+
+	// 超标处置
+	@Action("appSWChaobiaoChuzhi")
+	public String AppHntChaobiaoChuzhi() {
+		ActionContext context = ActionContext.getContext();
+		HttpServletRequest request = (HttpServletRequest) context.get(ServletActionContext.HTTP_REQUEST);
+		HttpServletResponse response = (HttpServletResponse) context.get(ServletActionContext.HTTP_RESPONSE);
+
+		JsonUtil.responseUTF8(response);
+		JSONObject returnJsonObj = new JSONObject();
+		String sql = "";
+		try {
+			request.setCharacterEncoding("UTF-8");
+
+			String bianhaoStr = request.getParameter("jieguobianhao");// 数据编号
+			if (StringUtil.Null2Blank(bianhaoStr).length() > 0) {
+				String chaobiaoyuanyin = StringUtil.Null2Blank(request.getParameter("chaobiaoyuanyin"));// 超标原因
+				String chuzhifangshi = StringUtil.Null2Blank(request.getParameter("chuzhifangshi"));// 处置方式
+				String chuzhijieguo = StringUtil.Null2Blank(request.getParameter("chuzhijieguo"));// 处置结果
+				String chuzhiren = StringUtil.Null2Blank(request.getParameter("chuzhiren"));// 处置人
+				String chuzhishijian = GetDate
+						.TimetmpConvetDateTime(StringUtil.Null2Blank(request.getParameter("chuzhishijian")));// 处置时间
+
+				String isIos = request.getParameter("isIos");
+
+				// -----代码片段 spingMVC上传文件
+				MultiPartRequestWrapper mRequest = null;
+				File[] file = null;
+				mRequest = (MultiPartRequestWrapper) request;// request强制转换注意
+				file = mRequest.getFiles("file");
+				if ("1".equals(isIos)) {
+					// android和ios文件上传后，在后台接受方式不一样
+					// mRequest = (MultipartHttpServletRequest) request;//
+					// request强制转换注意
+					// file = mRequest.getFile("file");
+				} else {
+					// 解决android乱码问题
+					chaobiaoyuanyin = new String(chaobiaoyuanyin.getBytes("ISO-8859-1"), "utf-8");
+					chuzhifangshi = new String(chuzhifangshi.getBytes("ISO-8859-1"), "utf-8");
+					chuzhijieguo = new String(chuzhijieguo.getBytes("ISO-8859-1"), "utf-8");
+					chuzhiren = new String(chuzhiren.getBytes("ISO-8859-1"), "utf-8");
+				}
+
+				if (StringUtil.Null2Blank(chuzhishijian).length() <= 0) {
+					chuzhishijian = GetDate.getNowTime("yyyy-MM-dd HH:MM:ss");
+				}
+
+				InputStream input = request.getInputStream();// 读取二进制图片流
+
+				if (file != null) {
+					input = new FileInputStream(file[0]);
+				}
+
+				if (null != input) {
+					int a = input.available();
+					// 保存文件的物理根地址
+					StringBuffer savepath = new StringBuffer(request.getSession().getServletContext().getRealPath("/"));
+					savepath.append("\\" + "hntChaobiaoAttachment");
+					// 保存数据库表中路径
+					StringBuffer sqlsavepath = new StringBuffer("hntChaobiaoAttachment/");
+
+					// 更改文件名称
+					String uploadFileidFileName = bianhaoStr + "-" + System.currentTimeMillis() + ".png";
+					// 保存到文件物理地址各类型文件目录
+					StringBuffer savepath_photofileid = new StringBuffer(savepath);
+					savepath_photofileid.append("\\" + uploadFileidFileName);
+					sqlsavepath.append(uploadFileidFileName);// 数据库表中的名称
+
+					File savedir = new File(savepath.toString());
+					if (!savedir.exists()) {
+						savedir.mkdirs();
+					}
+
+					// String tupianName = "APP_" + bianhaoStr + "_" +
+					// System.currentTimeMillis() + ".jpg";
+					// System.out.println(tupianName);
+					FileOutputStream fos = new FileOutputStream(savepath_photofileid.toString());
+					int size = 0;
+					byte[] buffer = new byte[1024];
+					while ((size = input.read(buffer, 0, 1024)) != -1) {
+						fos.write(buffer, 0, size);
+					}
+					fos.close();
+					input.close();
+					sql = "update Shuiwenxixxjieguo set shenpidate='" + chuzhishijian + "',wentiyuanyin='"
+							+ chaobiaoyuanyin + "',chulifangshi='" + chuzhifangshi + "' " + ",chuliren='" + chuzhiren
+							+ "',filepath='" + sqlsavepath.toString() + "',chulijieguo='" + chuzhijieguo + "' where "
+							+ " swbianhao=" + bianhaoStr;
+				}
+				System.out.println(sql);
+				int a = appSystemService.updateBySql(sql);
+				if (a >= 1) {
+					returnJsonObj.put("description", "超标处置成功！");
+					returnJsonObj.put("success", true);
+				} else {
+					returnJsonObj.put("description", "混凝土APP超标处置错误！");
+					returnJsonObj.put("success", false);
+				}
+			} else {
+				returnJsonObj.put("description", "编号id为空");
+				returnJsonObj.put("success", false);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			returnJsonObj.put("description", "混凝土APP超标处置错误！");
+			returnJsonObj.put("success", false);
+		}
+		JsonUtil.outPrint(response, returnJsonObj.toString());
+		return null;
+	}
+
+	// 超标审批
+	@Action("appHntChaobiaoShenpi")
+	public void appHntChaobiaoShenpi() {
+
+		ActionContext context = ActionContext.getContext();
+		HttpServletRequest request = (HttpServletRequest) context.get(ServletActionContext.HTTP_REQUEST);
+		HttpServletResponse response = (HttpServletResponse) context.get(ServletActionContext.HTTP_RESPONSE);
+
+		JsonUtil.responseUTF8(response);
+		JSONObject returnJsonObj = new JSONObject();
+		try {
+			request.setCharacterEncoding("UTF-8");
+			String bianhaoStr = request.getParameter("jieguobianhao");// 数据编号
+			if (StringUtil.Null2Blank(bianhaoStr).length() > 0) {
+				String yezhuyijian = StringUtil.Null2Blank(request.getParameter("yezhuyijian"));// 业主意见
+				String confirmdate = GetDate
+						.TimetmpConvetDateTime(StringUtil.Null2Blank(request.getParameter("confirmdate")));// 确认日期
+				String shenpiren = StringUtil.Null2Blank(request.getParameter("shenpiren"));// 审批人
+				String shenpidate = GetDate
+						.TimetmpConvetDateTime(StringUtil.Null2Blank(request.getParameter("shenpidate")));// 审批日期
+				if (StringUtil.Null2Blank(shenpidate).length() <= 0) {
+					shenpidate = GetDate.getNowTime("yyyy-MM-dd HH:MM:ss");
+				}
+
+				yezhuyijian = new String(yezhuyijian.getBytes("ISO-8859-1"), "utf-8");
+				shenpiren = new String(shenpiren.getBytes("ISO-8859-1"), "utf-8");
+
+				String sql = "update Shuiwenxixxjieguo set yezhuyijian='" + yezhuyijian + "'," + "confirmdate='"
+						+ confirmdate + "',yezhuren='" + shenpiren + "' where " + " swbianhao=" + bianhaoStr;
+
+				System.out.println(sql);
+				int a = appSystemService.updateBySql(sql);
+				if (a >= 1) {
+					returnJsonObj.put("description", "超标处置成功！");
+					returnJsonObj.put("success", true);
+				} else {
+					returnJsonObj.put("description", "混凝土APP超标处置错误！");
+					returnJsonObj.put("success", false);
+				}
+			} else {
+				returnJsonObj.put("description", "编号id为空");
+				returnJsonObj.put("success", false);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			returnJsonObj.put("description", "混凝土APP超标处置错误！");
 			returnJsonObj.put("success", false);
 		}
 		responseOutWrite(response, returnJsonObj);
@@ -910,7 +1233,6 @@ public class AppInterfaceAction extends BaseAction {
 		return bciList;
 	}
 
-	//
 	public <T> List<AppSWMaterialEntity> bean2List1(T t, ShuiwenziduancfgView hbfield, int objType) {
 
 		List<AppSWMaterialEntity> bciList = new ArrayList<AppSWMaterialEntity>();

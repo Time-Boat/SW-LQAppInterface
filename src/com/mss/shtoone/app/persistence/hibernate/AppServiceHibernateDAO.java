@@ -1,6 +1,5 @@
 package com.mss.shtoone.app.persistence.hibernate;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -10,26 +9,26 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.mss.shtoone.app.domain.AppInterfaceChaobiaoEntity;
 import com.mss.shtoone.app.domain.AppLoginLogEntity;
 import com.mss.shtoone.app.persistence.AppDAO;
 import com.mss.shtoone.domain.Banhezhanxinxi;
 import com.mss.shtoone.domain.Biaoduanxinxi;
 import com.mss.shtoone.domain.GenericPageMode;
+import com.mss.shtoone.domain.ShaifenjieguoView;
 import com.mss.shtoone.domain.ShuiwenphbView;
 import com.mss.shtoone.domain.ShuiwenxixxView;
 import com.mss.shtoone.domain.ShuiwenziduancfgView;
 import com.mss.shtoone.domain.Xiangmubuxinxi;
 import com.mss.shtoone.persistence.BanhezhanDAO;
 import com.mss.shtoone.persistence.BiaoduanDAO;
+import com.mss.shtoone.persistence.HunnintuViewDAO;
+import com.mss.shtoone.persistence.ShaifenjieguoViewDAO;
 import com.mss.shtoone.persistence.ShuiwenmanualphbViewDAO;
 import com.mss.shtoone.persistence.ShuiwenxixxViewDAO;
 import com.mss.shtoone.persistence.XiangmubuDAO;
-import com.mss.shtoone.service.QueryService;
+import com.mss.shtoone.service.ShaifenshiyanService;
 import com.mss.shtoone.service.SwViewService;
 import com.mss.shtoone.util.StringUtil;
-
-import antlr.StringUtils;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_UNCOMMITTED)
@@ -54,7 +53,18 @@ public class AppServiceHibernateDAO {
 	private ShuiwenmanualphbViewDAO swmanualphbViewDao;
 
 	@Autowired
+	private HunnintuViewDAO hntDAO;
+	
+	@Autowired
+	private ShaifenjieguoViewDAO sfjieguoViewDAO;
+	
+	@Autowired
 	private SwViewService swService;
+
+	// 根据sql插入数据
+	public Integer updateBySql(String sql) throws Exception {
+		return appDAO.executeUpdate(sql);
+	}
 
 	// 获取拌合站设备
 	public List<Banhezhanxinxi> getMachine(String fn, String id, String leixing) {
@@ -111,7 +121,7 @@ public class AppServiceHibernateDAO {
 
 	public List<Banhezhanxinxi> bhzList(String modelType) {
 		String queryString = "";
-		queryString = "from Banhezhanxinxi as model where model.shebeileixin = '"+modelType+"' ";
+		queryString = "from Banhezhanxinxi as model where model.shebeileixin = '" + modelType + "' ";
 		return bhzDAO.find(queryString);
 	}
 
@@ -157,10 +167,31 @@ public class AppServiceHibernateDAO {
 		return swmanualphbViewDao.appSwmateriallist(startTime, endTime, shebeibianhao, biaoduan, xiangmubu, fn, bsid);
 	}
 
+	// 水稳数据查询
+	public GenericPageMode swcllist(String shebeibianhao,String startTimeOne,
+			String endTimeOne,Integer biaoduan, Integer xiangmubu, 
+			String fn, int bsid, int offset, int pagesize,String llbuwei) {
+		return hntDAO.viewswlist(shebeibianhao,startTimeOne,endTimeOne, 
+				biaoduan, xiangmubu, fn, bsid, offset, pagesize,llbuwei);
+	}
+		
 	// 水稳材料统计
 	public ShuiwenphbView swmateriallist(String startTime, String endTime, String shebeibianhao, Integer biaoduan,
 			Integer xiangmubu, String fn, int bsid) {
 		return swmanualphbViewDao.swmateriallist(startTime, endTime, shebeibianhao, biaoduan, xiangmubu, fn, bsid);
+	}
+	
+	public ShaifenjieguoView getShaifenjieguoViewByswId(Integer swbianhao){
+		//List<ShaifenjieguoView> sfjieguoViewlist=sfjieguoViewDAO.find("from ShaifenjieguoView where swbianhao="+swbianhao);
+		List<ShaifenjieguoView>  sfjieguoViewlist = sfjieguoViewDAO.findBySql("select * from ShaifenjieguoView where swbianhao="+swbianhao);
+		
+		//List<ShaifenjieguoView> test  = sfjieguoViewDAO.find(queryString, values)
+		if(sfjieguoViewlist!=null && sfjieguoViewlist.size()>0){
+			//return sfjieguoViewlist.get(0);
+			return sfjieguoViewlist.get(sfjieguoViewlist.size()-1);
+		}else{
+			return null;
+		}
 	}
 
 	// 沥青接口-------------------------------------------------------------------------------------------------------------------------------------------------------------------

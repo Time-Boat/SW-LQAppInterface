@@ -1,6 +1,6 @@
 package com.mss.shtoone.app.domain;
 
-public class SWChaobiaoItemEntity {
+public class SWDataQueryEntity {
 	
 	private String bianhao;
 	private String bzhName;
@@ -13,7 +13,9 @@ public class SWChaobiaoItemEntity {
 	private String sjg5;
 	private String sjf1;
 	private String sjf2;
+	
 	private String sjshui;
+	
 	private String usePosition;
 	
 	public String getUsePosition() {
@@ -27,21 +29,6 @@ public class SWChaobiaoItemEntity {
 	}
 	public void setSjshui(String sjshui) {
 		this.sjshui = sjshui;
-	}
-	private String shenhe;
-	private String chuli;
-	
-	public String getShenhe() {
-		return shenhe;
-	}
-	public void setShenhe(String shenhe) {
-		this.shenhe = shenhe;
-	}
-	public String getChuli() {
-		return chuli;
-	}
-	public void setChuli(String chuli) {
-		this.chuli = chuli;
 	}
 	public String getBianhao() {
 		return bianhao;

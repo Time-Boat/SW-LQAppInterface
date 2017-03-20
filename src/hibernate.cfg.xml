@@ -117,6 +117,8 @@
 		<mapping class="com.mss.shtoone.domain.Lqshaifenjieguo"/>
 		<mapping class="com.mss.shtoone.domain.LqshaifenjieguoView"/>
 		
+		<mapping class="com.mss.shtoone.domain.Shaifenziduancfg"/>
+		
 		<!-- app接口 -->
 		<mapping class="com.mss.shtoone.app.domain.AppLoginLogEntity"/>
 		

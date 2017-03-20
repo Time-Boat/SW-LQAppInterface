@@ -8,6 +8,7 @@ public class SWChaobiaoCZSHInfo {
 	private String shenpidate;
 	private String chuliren;
 	private String chulijieguo;
+	private String filePath;
 	
 	//业主审核
 	private String yezhuyijian;
@@ -37,8 +38,6 @@ public class SWChaobiaoCZSHInfo {
 	public void setYezhuyijian(String yezhuyijian) {
 		this.yezhuyijian = yezhuyijian;
 	}
-
-	private String filePath;
 
 	public String getFilePath() {
 		return filePath;
