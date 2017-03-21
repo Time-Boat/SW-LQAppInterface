@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,9 +40,11 @@ import com.mss.shtoone.domain.ShuiwenmanualphbView;
 import com.mss.shtoone.domain.ShuiwenphbView;
 import com.mss.shtoone.domain.ShuiwenxixxView;
 import com.mss.shtoone.domain.Shuiwenxixxjieguo;
+import com.mss.shtoone.domain.ShuiwenxixxlilunView;
 import com.mss.shtoone.domain.ShuiwenziduancfgView;
 import com.mss.shtoone.domain.Xiangmubuxinxi;
 import com.mss.shtoone.service.QueryService;
+import com.mss.shtoone.service.ShuiwenxixxlilunService;
 import com.mss.shtoone.service.SystemService;
 import com.mss.shtoone.service.UserService;
 import com.mss.shtoone.util.GetDate;
@@ -298,6 +301,42 @@ public class AppInterfaceAction extends BaseAction {
 		responseOutWrite(response, returnJsonObj);
 	}
 
+	@Autowired
+	private ShuiwenxixxlilunService swllService;
+	
+	// 水稳历史数据使用部位数据
+	@Action("usePosition")
+	public void usePosition() {
+		ActionContext context = ActionContext.getContext();
+		HttpServletRequest request = (HttpServletRequest) context.get(ServletActionContext.HTTP_REQUEST);
+		HttpServletResponse response = (HttpServletResponse) context.get(ServletActionContext.HTTP_RESPONSE);
+
+		JsonUtil.responseUTF8(response);
+		JSONObject returnJsonObj = new JSONObject();
+
+		Map<String, String> llbuweilistMap = new LinkedHashMap<String, String>();
+		Map<String, String> llbuweilistMap1 = new LinkedHashMap<String, String>();
+		List<ShuiwenxixxlilunView> swLilunlist = swllService.getAll(null,null,null,"all", 
+				0);
+		for(ShuiwenxixxlilunView swxixxLilun:swLilunlist){
+			llbuweilistMap.put(swxixxLilun.getLlbuwei(), swxixxLilun.getLlbuwei());
+		}
+		int i = 0;
+		for(String str : llbuweilistMap.keySet()){
+			llbuweilistMap1.put("a"+i++, str);
+		}
+		
+		try {
+			returnJsonObj.put("data", llbuweilistMap1);
+			returnJsonObj.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			returnJsonObj.put("data", "[]");
+			returnJsonObj.put("success", false);
+		}
+		responseOutWrite(response, returnJsonObj);
+	}
+		
 	/**
 	 * 水稳预警统计
 	 * 
@@ -667,6 +706,8 @@ public class AppInterfaceAction extends BaseAction {
 			String shebeibianhao = request.getParameter("shebeibianhao");
 			String usePosition = request.getParameter("usePosition");
 
+			usePosition = new String(usePosition.getBytes("iso-8859-1"),"utf-8");
+			
 			if (!StringUtil.isNotEmpty(startTime) && !StringUtil.isNotEmpty(endTime)) {
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				Calendar day = Calendar.getInstance();
@@ -741,7 +782,7 @@ public class AppInterfaceAction extends BaseAction {
 		responseOutWrite(response, returnJsonObj);
 	}
 
-	// 超标查询详情
+	// 历史数据查询详情
 	@Action("appSwclXQ")
 	public void appSwclXQ() {
 
@@ -754,9 +795,9 @@ public class AppInterfaceAction extends BaseAction {
 
 		String bianhao = request.getParameter("bianhao");
 		String shebeibianhao = request.getParameter("shebeibianhao");
-
+		
 		ShuiwenxixxView swxx = queryService.swxxfindById(Integer.parseInt(bianhao));
-
+		
 		// 头信息
 		SWXQHeadInfoEntity swHead = new SWXQHeadInfoEntity();
 		swHead.setBaocunshijian(swxx.getCaijishijian());

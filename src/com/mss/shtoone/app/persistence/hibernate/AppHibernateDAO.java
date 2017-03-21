@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import com.mss.shtoone.app.domain.AppInterfaceChaobiaoEntity;
 import com.mss.shtoone.app.domain.AppLoginLogEntity;
 import com.mss.shtoone.app.persistence.AppDAO;
+import com.mss.shtoone.domain.Shaifenziduancfg;
 import com.mss.shtoone.persistence.hibernate.GenericHibernateDAO;
 import com.mss.shtoone.util.DbJdbcUtil;
 import com.mss.shtoone.util.StringUtil;
@@ -134,7 +135,7 @@ public class AppHibernateDAO extends GenericHibernateDAO<AppLoginLogEntity, Inte
 		}
 		return b;
 	}
-
+	
 	private void closeCon(ResultSet rs, Statement st, Connection con) {
 		DbJdbcUtil.closeAll(rs, st, con);
 	}

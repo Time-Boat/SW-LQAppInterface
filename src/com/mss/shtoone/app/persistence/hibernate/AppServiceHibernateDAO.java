@@ -15,6 +15,7 @@ import com.mss.shtoone.domain.Banhezhanxinxi;
 import com.mss.shtoone.domain.Biaoduanxinxi;
 import com.mss.shtoone.domain.GenericPageMode;
 import com.mss.shtoone.domain.ShaifenjieguoView;
+import com.mss.shtoone.domain.Shaifenziduancfg;
 import com.mss.shtoone.domain.ShuiwenphbView;
 import com.mss.shtoone.domain.ShuiwenxixxView;
 import com.mss.shtoone.domain.ShuiwenziduancfgView;
@@ -23,11 +24,13 @@ import com.mss.shtoone.persistence.BanhezhanDAO;
 import com.mss.shtoone.persistence.BiaoduanDAO;
 import com.mss.shtoone.persistence.HunnintuViewDAO;
 import com.mss.shtoone.persistence.ShaifenjieguoViewDAO;
+import com.mss.shtoone.persistence.ShaifenziduancfgDAO;
 import com.mss.shtoone.persistence.ShuiwenmanualphbViewDAO;
 import com.mss.shtoone.persistence.ShuiwenxixxViewDAO;
 import com.mss.shtoone.persistence.XiangmubuDAO;
 import com.mss.shtoone.service.ShaifenshiyanService;
 import com.mss.shtoone.service.SwViewService;
+import com.mss.shtoone.service.SystemService;
 import com.mss.shtoone.util.StringUtil;
 
 @Service
@@ -54,13 +57,13 @@ public class AppServiceHibernateDAO {
 
 	@Autowired
 	private HunnintuViewDAO hntDAO;
-	
+
 	@Autowired
 	private ShaifenjieguoViewDAO sfjieguoViewDAO;
-	
-	@Autowired
-	private SwViewService swService;
 
+	@Autowired
+	private ShaifenziduancfgDAO sfzdDAO;
+	
 	// 根据sql插入数据
 	public Integer updateBySql(String sql) throws Exception {
 		return appDAO.executeUpdate(sql);
@@ -168,32 +171,35 @@ public class AppServiceHibernateDAO {
 	}
 
 	// 水稳数据查询
-	public GenericPageMode swcllist(String shebeibianhao,String startTimeOne,
-			String endTimeOne,Integer biaoduan, Integer xiangmubu, 
-			String fn, int bsid, int offset, int pagesize,String llbuwei) {
-		return hntDAO.viewswlist(shebeibianhao,startTimeOne,endTimeOne, 
-				biaoduan, xiangmubu, fn, bsid, offset, pagesize,llbuwei);
+	public GenericPageMode swcllist(String shebeibianhao, String startTimeOne, String endTimeOne, Integer biaoduan,
+			Integer xiangmubu, String fn, int bsid, int offset, int pagesize, String llbuwei) {
+		return hntDAO.viewswlist(shebeibianhao, startTimeOne, endTimeOne, biaoduan, xiangmubu, fn, bsid, offset,
+				pagesize, llbuwei);
 	}
-		
+
 	// 水稳材料统计
 	public ShuiwenphbView swmateriallist(String startTime, String endTime, String shebeibianhao, Integer biaoduan,
 			Integer xiangmubu, String fn, int bsid) {
 		return swmanualphbViewDao.swmateriallist(startTime, endTime, shebeibianhao, biaoduan, xiangmubu, fn, bsid);
 	}
-	
-	public ShaifenjieguoView getShaifenjieguoViewByswId(Integer swbianhao){
-		//List<ShaifenjieguoView> sfjieguoViewlist=sfjieguoViewDAO.find("from ShaifenjieguoView where swbianhao="+swbianhao);
-		List<ShaifenjieguoView>  sfjieguoViewlist = sfjieguoViewDAO.findBySql("select * from ShaifenjieguoView where swbianhao="+swbianhao);
-		
-		//List<ShaifenjieguoView> test  = sfjieguoViewDAO.find(queryString, values)
-		if(sfjieguoViewlist!=null && sfjieguoViewlist.size()>0){
-			//return sfjieguoViewlist.get(0);
-			return sfjieguoViewlist.get(sfjieguoViewlist.size()-1);
-		}else{
+
+	public ShaifenjieguoView getShaifenjieguoViewByswId(Integer swbianhao) {
+		// List<ShaifenjieguoView> sfjieguoViewlist=sfjieguoViewDAO.find("from
+		// ShaifenjieguoView where swbianhao="+swbianhao);
+		List<ShaifenjieguoView> sfjieguoViewlist = sfjieguoViewDAO
+				.findBySql("select * from ShaifenjieguoView where swbianhao=" + swbianhao);
+
+		// List<ShaifenjieguoView> test = sfjieguoViewDAO.find(queryString,
+		// values)
+		if (sfjieguoViewlist != null && sfjieguoViewlist.size() > 0) {
+			// return sfjieguoViewlist.get(0);
+			return sfjieguoViewlist.get(sfjieguoViewlist.size() - 1);
+		} else {
 			return null;
 		}
 	}
 
+	
 	// 沥青接口-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	// 沥青预警统计查询

@@ -1,5 +1,9 @@
 package com.mss.shtoone.app.action.lq;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -14,6 +18,7 @@ import net.sf.json.JSONObject;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.dispatcher.multipart.MultiPartRequestWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -29,6 +34,8 @@ import com.mss.shtoone.app.domain.lq.LQChaobiaoCZSHInfo;
 import com.mss.shtoone.app.domain.lq.LQChaobiaoItemEntity;
 import com.mss.shtoone.app.domain.lq.LQWraningStatisticsEntity;
 import com.mss.shtoone.app.domain.lq.LQXQHeadInfoEntity;
+import com.mss.shtoone.app.domain.lq.LQgallclItemEntity;
+import com.mss.shtoone.app.domain.lq.LQziduancfgItem2Entity;
 import com.mss.shtoone.app.domain.lq.LQziduancfgItemEntity;
 import com.mss.shtoone.app.persistence.hibernate.AppServiceHibernateDAO;
 import com.mss.shtoone.app.persistence.hibernate.lq.AppLqServiceHibernateDAO;
@@ -37,9 +44,11 @@ import com.mss.shtoone.domain.Biaoduanxinxi;
 import com.mss.shtoone.domain.GenericPageMode;
 import com.mss.shtoone.domain.LiqingView;
 import com.mss.shtoone.domain.LiqingmanualphbView;
+import com.mss.shtoone.domain.LiqingphbView;
 import com.mss.shtoone.domain.Liqingxixxjieguo;
 import com.mss.shtoone.domain.LiqingziduancfgView;
 import com.mss.shtoone.domain.ShuiwenmanualphbView;
+import com.mss.shtoone.domain.ShuiwenphbView;
 import com.mss.shtoone.domain.ShuiwenxixxView;
 import com.mss.shtoone.domain.Shuiwenxixxjieguo;
 import com.mss.shtoone.domain.ShuiwenziduancfgView;
@@ -625,6 +634,28 @@ public class AppLqInterfaceAction extends BaseAction{
 		}
 		
 		
+		//简化沥青是否显示字段
+				private LQziduancfgItem2Entity lqapField3(LiqingziduancfgView lqisshow) {
+					LQziduancfgItem2Entity field = new LQziduancfgItem2Entity();
+					
+					field.setSjg1(lqisshow.getSjg1());
+					field.setSjg2(lqisshow.getSjg2());
+					field.setSjg3(lqisshow.getSjg3());
+					field.setSjg4(lqisshow.getSjg4());
+					field.setSjg5(lqisshow.getSjg5());
+					field.setSjg6(lqisshow.getSjg6());
+					field.setSjg7(lqisshow.getSjg7());
+					
+					field.setSjtjj(lqisshow.getSjtjj());
+					field.setSjf1(lqisshow.getSjf1());
+					
+					
+					field.setSjf2(lqisshow.getSjf2());
+					
+					field.setSjlq(lqisshow.getSjlq());
+					return field;
+				}
+		
 		// 沥青超标查询
 		@Action("lqchaoBiaoXQ")
 		public void lqchaoBiaoXQ() {
@@ -682,6 +713,362 @@ public class AppLqInterfaceAction extends BaseAction{
 			responseOutWrite(response, returnJsonObj);
 		}
 		
+		//沥青材料用量核算
+		@Action("lqmaterial")
+		public void lqmaterial() {
+			ActionContext context = ActionContext.getContext();
+			HttpServletRequest request = (HttpServletRequest) context.get(ServletActionContext.HTTP_REQUEST);
+			HttpServletResponse response = (HttpServletResponse) context.get(ServletActionContext.HTTP_RESPONSE);
+
+			JsonUtil.responseUTF8(response);
+			JSONObject returnJsonObj = new JSONObject();
+
+			String departType = request.getParameter("departType");
+			String biaoshiid = request.getParameter("biaoshiid");// 标识
+			String startTime = request.getParameter("startTime");// 开始时间(时间戳)
+			String endTime = request.getParameter("endTime");// 结束时间(时间戳)
+			String shebeibianhao = request.getParameter("shebeibianhao");
+
+			if (!StringUtil.isNotEmpty(departType) && !StringUtil.isNotEmpty(biaoshiid)) {
+				returnJsonObj.put("description", "departType或者biaoshiid为空");
+				returnJsonObj.put("success", false);
+				responseOutWrite(response, returnJsonObj);
+				return;
+			}
+
+			if (!StringUtil.isNotEmpty(startTime) && !StringUtil.isNotEmpty(endTime)) {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Calendar day = Calendar.getInstance();
+				endTime = sdf.format(day.getTime());
+				day.add(Calendar.MONTH, -1);
+				startTime = sdf.format(day.getTime());
+			} else {
+				startTime = GetDate.TimetmpConvetDateTime(request.getParameter("startTime"));// 开始时间
+				endTime = GetDate.TimetmpConvetDateTime(request.getParameter("endTime"));// 终止时间
+			}
+
+			Integer a = departType == "" || departType == null ? null : Integer.valueOf(departType);
+			Integer b = biaoshiid == "" || biaoshiid == null ? -1 : Integer.valueOf(biaoshiid);     //不赋值的话会报错
+
+			LiqingphbView lqviews = appLqHibernateDAO.lqmateriallist(startTime, endTime, shebeibianhao, null, null,
+					StringUtil.getQueryFieldNameByUserType(a), b);
+
+			LiqingziduancfgView lqziduanfield = queryService.getLqfield(shebeibianhao);
+
+			List<AppLQMaterialEntity> alq = bean2List1(lqviews, lqziduanfield, -1);
+			
+			LiqingziduancfgView lqisshow = queryService.getlqcfgisShow40(shebeibianhao);
+			if (lqisshow == null) {
+				lqisshow = queryService.getlqcfgisShow2(shebeibianhao);
+				
+			}
+			
+			LQziduancfgItem2Entity lqisshow2=lqapField3(lqisshow);
+
+			try {
+				returnJsonObj.put("data", alq);
+				returnJsonObj.put("lqisshow", lqisshow2);
+				returnJsonObj.put("success", true);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				returnJsonObj.put("data", "[]");
+				returnJsonObj.put("success", false);
+			}
+			responseOutWrite(response, returnJsonObj);
+		}
+		
+		
+		//沥青历史数据查询
+		@Action("lqgallclList")
+		public void lqgallclList() {
+			ActionContext context = ActionContext.getContext();
+			HttpServletRequest request = (HttpServletRequest) context.get(ServletActionContext.HTTP_REQUEST);
+			HttpServletResponse response = (HttpServletResponse) context.get(ServletActionContext.HTTP_RESPONSE);
+
+			JsonUtil.responseUTF8(response);
+			JSONObject returnJsonObj = new JSONObject();
+
+			String departType = request.getParameter("departType");
+			String biaoshiid = request.getParameter("biaoshiid");// 标识
+			String startTime = request.getParameter("startTime");// 开始时间(时间戳)
+			String endTime = request.getParameter("endTime");// 结束时间(时间戳)
+			String shebeibianhao = request.getParameter("shebeibianhao");
+			String peifan = request.getParameter("peifan"); //沥青混合料型号
+			
+			if (!StringUtil.isNotEmpty(departType) || !StringUtil.isNotEmpty(biaoshiid)) {
+				returnJsonObj.put("description", "departType或者biaoshiid为空");
+				returnJsonObj.put("success", false);
+				responseOutWrite(response, returnJsonObj);
+				return;
+			}
+
+			
+			if (!StringUtil.isNotEmpty(startTime) && !StringUtil.isNotEmpty(endTime)) {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Calendar day = Calendar.getInstance();
+				endTime = sdf.format(day.getTime());
+				day.add(Calendar.MONTH, -1);
+				startTime = sdf.format(day.getTime());
+			} else {
+				startTime = GetDate.TimetmpConvetDateTime(request.getParameter("startTime"));// 开始时间
+				endTime = GetDate.TimetmpConvetDateTime(request.getParameter("endTime"));// 终止时间
+			}
+
+			int pageNo = 1;
+			if (StringUtil.Null2Blank(request.getParameter("pageNo")).length() > 0) {
+				pageNo = Integer.parseInt(request.getParameter("pageNo"));
+			}
+			int maxPageItems = 15;
+			if (StringUtil.Null2Blank(request.getParameter("maxPageItems")).length() > 0) {
+				maxPageItems = Integer.parseInt(request.getParameter("maxPageItems"));
+			}
+
+			LiqingziduancfgView lqisshow = queryService.getlqcfgisShow40(shebeibianhao);
+			if (lqisshow == null) {
+				lqisshow = queryService.getlqcfgisShow2(shebeibianhao);
+				
+			}
+			LiqingziduancfgView lqziduanfield = queryService.getLqfield(shebeibianhao);
+
+			Integer c = biaoshiid == "" || biaoshiid == null ? null : Integer.valueOf(biaoshiid);
+			
+			
+
+			GenericPageMode s = appLqHibernateDAO.lqviewlist(shebeibianhao,startTime,endTime, 
+					 null, null, 
+					StringUtil.getQueryFieldNameByUserType(Integer.parseInt(departType)), 
+					c, pageNo, maxPageItems,1,peifan );
+					
+			/*GenericPageMode s = appSystemService.swchaobiaomanualviewlist(shebeibianhao, startTime, endTime, null, null,
+					StringUtil.getQueryFieldNameByUserType(Integer.parseInt(departType)), c, pageNo, maxPageItems, d,
+					lqisshow, e, "");*/
+			
+
+			List<LiqingView> list = s.getDatas();
+
+			List<LQgallclItemEntity> dataList = new ArrayList();
+
+			for (LiqingView  sw : list) {
+				LQgallclItemEntity sc = new LQgallclItemEntity();
+				sc.setBianhao(sw.getBianhao() + "");
+				sc.setBhzName(sw.getBanhezhanminchen());
+				sc.setClTime(sw.getShijian());
+				sc.setSjg1(sw.getSjg1());
+				sc.setSjg2(sw.getSjg2());
+				sc.setSjg3(sw.getSjg3());
+				sc.setSjg4(sw.getSjg4());
+				sc.setSjg5(sw.getSjg5());
+				sc.setSjg6(sw.getSjg6());
+				sc.setSjg7(sw.getSjg7());
+				sc.setSjysb(sw.getSjysb());
+				sc.setClwd(sw.getClwd());
+				sc.setGlwd(sw.getGlwd());
+				sc.setLqwd(sw.getLqwd());
+				sc.setSjtjj(sw.getSjtjj());
+				sc.setSjf1(sw.getSjf1());
+				sc.setSjf2(sw.getSjf2());
+				
+				sc.setSjlq(sw.getSjlq());
+
+				dataList.add(sc);
+			}
+			
+			LQgallclItemEntity field = lqapField5(lqziduanfield);
+			
+			LQziduancfgItemEntity lqisshow2 = lqapField2(lqisshow);
+			
+			if(lqisshow2.getClwd() == null || "0".equals(lqisshow2.getClwd())){
+				lqisshow2.setClwd("1");
+			}
+			if(lqisshow2.getGlwd() == null || "0".equals(lqisshow2.getGlwd())){
+				lqisshow2.setGlwd("1");
+			}
+			if(lqisshow2.getLqwd() == null || "0".equals(lqisshow2.getLqwd())){
+				lqisshow2.setLqwd("1");
+			}
+			if(lqisshow2.getSjysb() == null || "0".equals(lqisshow2.getSjysb())){
+				lqisshow2.setSjysb("1");
+			}
+			
+			
+			field.setBianhao("编号");
+			field.setBhzName("拌合站名称");
+			
+
+			try {
+				returnJsonObj.put("field", field);
+				returnJsonObj.put("lqisshow", lqisshow2);
+				returnJsonObj.put("data", dataList);
+				returnJsonObj.put("success", true);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				returnJsonObj.put("data", "[]");
+				returnJsonObj.put("success", false);
+			}
+			responseOutWrite(response, returnJsonObj);
+		}
+		
+		// 超标处置
+		@Action("appLQChaobiaoChuzhi")
+		public String appLQChaobiaoChuzhi() {
+			ActionContext context = ActionContext.getContext();
+			HttpServletRequest request = (HttpServletRequest) context.get(ServletActionContext.HTTP_REQUEST);
+			HttpServletResponse response = (HttpServletResponse) context.get(ServletActionContext.HTTP_RESPONSE);
+
+			JsonUtil.responseUTF8(response);
+			JSONObject returnJsonObj = new JSONObject();
+			String sql = "";
+			try {
+				request.setCharacterEncoding("UTF-8");
+
+				String bianhaoStr = request.getParameter("jieguobianhao");// 数据编号
+				if (StringUtil.Null2Blank(bianhaoStr).length() > 0) {
+					String chaobiaoyuanyin = StringUtil.Null2Blank(request.getParameter("chaobiaoyuanyin"));// 超标原因
+					String chuzhifangshi = StringUtil.Null2Blank(request.getParameter("chuzhifangshi"));// 处置方式
+					String chuzhijieguo = StringUtil.Null2Blank(request.getParameter("chuzhijieguo"));// 处置结果
+					String chuzhiren = StringUtil.Null2Blank(request.getParameter("chuzhiren"));// 处置人
+					String chuzhishijian = GetDate
+							.TimetmpConvetDateTime(StringUtil.Null2Blank(request.getParameter("chuzhishijian")));// 处置时间
+
+					String isIos = request.getParameter("isIos");
+
+					// -----代码片段 spingMVC上传文件
+					MultiPartRequestWrapper mRequest = null;
+					File[] file = null;
+					mRequest = (MultiPartRequestWrapper) request;// request强制转换注意
+					file = mRequest.getFiles("file");
+					if ("1".equals(isIos)) {
+						// android和ios文件上传后，在后台接受方式不一样
+						// mRequest = (MultipartHttpServletRequest) request;//
+						// request强制转换注意
+						// file = mRequest.getFile("file");
+					} else {
+						// 解决android乱码问题
+						chaobiaoyuanyin = new String(chaobiaoyuanyin.getBytes("ISO-8859-1"), "utf-8");
+						chuzhifangshi = new String(chuzhifangshi.getBytes("ISO-8859-1"), "utf-8");
+						chuzhijieguo = new String(chuzhijieguo.getBytes("ISO-8859-1"), "utf-8");
+						chuzhiren = new String(chuzhiren.getBytes("ISO-8859-1"), "utf-8");
+					}
+
+					if (StringUtil.Null2Blank(chuzhishijian).length() <= 0) {
+						chuzhishijian = GetDate.getNowTime("yyyy-MM-dd HH:MM:ss");
+					}
+
+					InputStream input = request.getInputStream();// 读取二进制图片流
+
+					if (file != null) {
+						input = new FileInputStream(file[0]);
+					}
+
+					if (null != input) {
+						int a = input.available();
+						// 保存文件的物理根地址
+						StringBuffer savepath = new StringBuffer(request.getSession().getServletContext().getRealPath("/"));
+						savepath.append("\\" + "lqChaobiaoAttachment");
+						// 保存数据库表中路径
+						StringBuffer sqlsavepath = new StringBuffer("lqChaobiaoAttachment/");
+
+						// 更改文件名称
+						String uploadFileidFileName = bianhaoStr + "-" + System.currentTimeMillis() + ".png";
+						// 保存到文件物理地址各类型文件目录
+						StringBuffer savepath_photofileid = new StringBuffer(savepath);
+						savepath_photofileid.append("\\" + uploadFileidFileName);
+						sqlsavepath.append(uploadFileidFileName);// 数据库表中的名称
+
+						File savedir = new File(savepath.toString());
+						if (!savedir.exists()) {
+							savedir.mkdirs();
+						}
+
+						// String tupianName = "APP_" + bianhaoStr + "_" +
+						// System.currentTimeMillis() + ".jpg";
+						// System.out.println(tupianName);
+						FileOutputStream fos = new FileOutputStream(savepath_photofileid.toString());
+						int size = 0;
+						byte[] buffer = new byte[1024];
+						while ((size = input.read(buffer, 0, 1024)) != -1) {
+							fos.write(buffer, 0, size);
+						}
+						fos.close();
+						input.close();
+						sql = "update Liqingxixxjieguo set shenpidate='" + chuzhishijian + "',wentiyuanyin='"
+								+ chaobiaoyuanyin + "',chulifangshi='" + chuzhifangshi + "' " + ",jianliren='" + chuzhiren
+								+ "',filepath='" + sqlsavepath.toString() + "',chulijieguo='" + chuzhijieguo + "' where "
+								+ " lqbianhao=" + bianhaoStr;
+					}
+					System.out.println(sql);
+					int a = appSystemService.updateBySql(sql);
+					if (a >= 1) {
+						returnJsonObj.put("description", "超标处置成功！");
+						returnJsonObj.put("success", true);
+					} else {
+						returnJsonObj.put("description", "沥青APP超标处置错误！");
+						returnJsonObj.put("success", false);
+					}
+				} else {
+					returnJsonObj.put("description", "编号id为空");
+					returnJsonObj.put("success", false);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				returnJsonObj.put("description", "沥青APP超标处置错误！");
+				returnJsonObj.put("success", false);
+			}
+			JsonUtil.outPrint(response, returnJsonObj.toString());
+			return null;
+		}
+
+		// 超标审批
+		@Action("appLqChaobiaoShenpi")
+		public void appLqChaobiaoShenpi() {
+
+			ActionContext context = ActionContext.getContext();
+			HttpServletRequest request = (HttpServletRequest) context.get(ServletActionContext.HTTP_REQUEST);
+			HttpServletResponse response = (HttpServletResponse) context.get(ServletActionContext.HTTP_RESPONSE);
+
+			JsonUtil.responseUTF8(response);
+			JSONObject returnJsonObj = new JSONObject();
+			try {
+				request.setCharacterEncoding("UTF-8");
+				String bianhaoStr = request.getParameter("jieguobianhao");// 数据编号
+				if (StringUtil.Null2Blank(bianhaoStr).length() > 0) {
+					String yezhuyijian = StringUtil.Null2Blank(request.getParameter("yezhuyijian"));// 业主意见
+					String confirmdate = GetDate
+							.TimetmpConvetDateTime(StringUtil.Null2Blank(request.getParameter("confirmdate")));// 确认日期
+					String shenpiren = StringUtil.Null2Blank(request.getParameter("shenpiren"));// 审批人
+					String shenpidate = GetDate
+							.TimetmpConvetDateTime(StringUtil.Null2Blank(request.getParameter("shenpidate")));// 审批日期
+					if (StringUtil.Null2Blank(shenpidate).length() <= 0) {
+						shenpidate = GetDate.getNowTime("yyyy-MM-dd HH:MM:ss");
+					}
+
+					yezhuyijian = new String(yezhuyijian.getBytes("ISO-8859-1"), "utf-8");
+					shenpiren = new String(shenpiren.getBytes("ISO-8859-1"), "utf-8");
+					
+					String sql = "update Liqingxixxjieguo set yezhuyijian='"
+							+ yezhuyijian + "'," + "confirmdate='" + confirmdate
+							+ "',yezhuren='" + shenpiren + "' where " + " swbianhao=" + bianhaoStr;
+
+					System.out.println(sql);
+					int a = appSystemService.updateBySql(sql);
+					if (a >= 1) {
+						returnJsonObj.put("description", "超标处置成功！");
+						returnJsonObj.put("success", true);
+					} else {
+						returnJsonObj.put("description", "APP超标处置错误！");
+						returnJsonObj.put("success", false);
+					}
+				} else {
+					returnJsonObj.put("description", "编号id为空");
+					returnJsonObj.put("success", false);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				returnJsonObj.put("description", "APP超标处置错误！");
+				returnJsonObj.put("success", false);
+			}
+			responseOutWrite(response, returnJsonObj);
+		}
 		
 		// 获取指定实体类中的指定数据
 		public <T> List<AppLQMaterialEntity> bean2List(T t, LiqingziduancfgView hbfield, int objType) {
@@ -726,5 +1113,82 @@ public class AppLqInterfaceAction extends BaseAction{
 				}
 			
 			return bciList;
+		}
+		
+		// 获取指定实体类中的指定数据
+		public <T> List<AppLQMaterialEntity> bean2List1(T t, LiqingziduancfgView hbfield, int objType) {
+
+			List<AppLQMaterialEntity> bciList = new ArrayList<AppLQMaterialEntity>();
+
+			String[] cfg = { "g1", "g2", "g3", "g4", "g5", "g6","g7" ,"f1","f2","lq","tjj", };
+
+			for (int i = 0; i < cfg.length; i++) {
+				AppLQMaterialEntity lqm = new AppLQMaterialEntity();
+				try {
+					String name = (String) hbfield.getClass().getMethod("get" + "Sj" + cfg[i], new Class[] {})
+							.invoke(hbfield, new Object[] {});
+					String yongliang = (String) t.getClass().getMethod("get" + "Sj" + cfg[i], new Class[] {}).invoke(t,
+							new Object[] {});
+					String mbpeibi = (String) t.getClass().getMethod("get" + "Ll" + cfg[i], new Class[] {}).invoke(t,
+							new Object[] {});
+					String wucha = (String) t.getClass().getMethod("get" + "Persj" + cfg[i], new Class[] {}).invoke(t,
+							new Object[] {});
+
+					lqm.setName(name);
+					lqm.setYongliang(yongliang);
+					lqm.setMbpeibi(mbpeibi);
+					lqm.setWucha(wucha);
+
+					bciList.add(lqm);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			return bciList;
+		}
+		//简化沥青历史查询字段
+		private LQgallclItemEntity lqapField4(LiqingziduancfgView lqisshow) {
+			LQgallclItemEntity field = new LQgallclItemEntity();
+			
+			field.setSjg1(lqisshow.getSjg1());
+			field.setSjg2(lqisshow.getSjg2());
+			field.setSjg3(lqisshow.getSjg3());
+			field.setSjg4(lqisshow.getSjg4());
+			field.setSjg5(lqisshow.getSjg5());
+			field.setSjg6(lqisshow.getSjg6());
+			field.setSjg7(lqisshow.getSjg7());
+			
+			field.setSjtjj(lqisshow.getSjtjj());
+			field.setSjf1(lqisshow.getSjf1());
+			
+			
+			field.setSjf2(lqisshow.getSjf2());
+			
+			field.setSjlq(lqisshow.getSjlq());
+			return field;
+		}
+		
+		// 简化字段名对象
+		private LQgallclItemEntity lqapField5(LiqingziduancfgView lqziduanfield) {
+			LQgallclItemEntity field = new LQgallclItemEntity();
+			field.setClTime(lqziduanfield.getShijian());
+			field.setSjg1(lqziduanfield.getSjg1());
+			field.setSjg2(lqziduanfield.getSjg2());
+			field.setSjg3(lqziduanfield.getSjg3());
+			field.setSjg4(lqziduanfield.getSjg4());
+			field.setSjg5(lqziduanfield.getSjg5());
+			field.setSjg6(lqziduanfield.getSjg6());
+			field.setSjg7(lqziduanfield.getSjg7());
+			field.setClwd(lqziduanfield.getClwd());
+			field.setGlwd(lqziduanfield.getGlwd());
+			field.setLqwd(lqziduanfield.getLqwd());
+			field.setSjtjj(lqziduanfield.getSjtjj());
+			field.setSjf1(lqziduanfield.getSjf1());
+			field.setSjysb(lqziduanfield.getSjysb());
+	
+			field.setSjf2(lqziduanfield.getSjf2());
+	
+			field.setSjlq(lqziduanfield.getSjlq());
+			return field;
 		}
 }

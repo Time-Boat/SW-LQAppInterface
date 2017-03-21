@@ -14,6 +14,7 @@ import com.mss.shtoone.app.domain.AppLoginLogEntity;
 import com.mss.shtoone.app.persistence.AppLqDAO;
 import com.mss.shtoone.domain.GenericPageMode;
 import com.mss.shtoone.domain.LiqingView;
+import com.mss.shtoone.domain.LiqingphbView;
 import com.mss.shtoone.domain.LiqingziduancfgView;
 import com.mss.shtoone.domain.ShuiwenxixxView;
 import com.mss.shtoone.persistence.LiqingViewDAO;
@@ -53,5 +54,18 @@ public class AppLqServiceHibernateDAO {
 		return lqDAO.lqchaobiaomanualviewlist(lqisshow, chaobiaolx,shebeibianhao,startTimeOne,endTimeOne,
 				biaoduan, xiangmubu, fn, bsid, offset, pagesize,cllx,str);
 	}
-
+	
+	//沥青材料统计
+	public LiqingphbView lqmateriallist(String startTime,String endTime,String shebeibianhao, Integer biaoduan, 
+			Integer xiangmubu, String fn, int bsid){
+		return lqDAO.lqmateriallist(startTime, endTime, shebeibianhao,biaoduan,xiangmubu,fn,bsid);
+	}
+	
+	
+	public GenericPageMode lqviewlist(String shebeibianhao,String startTimeOne,
+			String endTimeOne,Integer biaoduan, Integer xiangmubu, 
+			String fn, int bsid, int offset, int pagesize, int queryalldata,String str) {
+		return lqDAO.lqviewlist(shebeibianhao,startTimeOne,endTimeOne,
+				biaoduan, xiangmubu, fn, bsid, offset, pagesize, queryalldata,str);
+	}
 }

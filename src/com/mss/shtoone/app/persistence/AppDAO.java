@@ -5,6 +5,7 @@ import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 import com.mss.shtoone.app.domain.AppLoginLogEntity;
+import com.mss.shtoone.domain.Shaifenziduancfg;
 import com.mss.shtoone.persistence.GenericDAO;
 
 @Repository
