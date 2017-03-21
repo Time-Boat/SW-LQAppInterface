@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,6 +26,7 @@ import com.mss.shtoone.app.domain.AppSWMaterialEntity;
 import com.mss.shtoone.app.domain.BhzInfoEntity;
 import com.mss.shtoone.app.domain.SWChaobiaoCZSHInfo;
 import com.mss.shtoone.app.domain.SWChaobiaoItemEntity;
+import com.mss.shtoone.app.domain.SWDataQueryChartEntity;
 import com.mss.shtoone.app.domain.SWDataQueryEntity;
 import com.mss.shtoone.app.domain.SWWraningStatisticsEntity;
 import com.mss.shtoone.app.domain.SWXQHeadInfoEntity;
@@ -51,6 +53,8 @@ import com.mss.shtoone.util.GetDate;
 import com.mss.shtoone.util.JsonUtil;
 import com.mss.shtoone.util.StringUtil;
 import com.opensymphony.xwork2.ActionContext;
+
+import antlr.StringUtils;
 
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -314,10 +318,20 @@ public class AppInterfaceAction extends BaseAction {
 		JsonUtil.responseUTF8(response);
 		JSONObject returnJsonObj = new JSONObject();
 
+		// 组织机构类型
+		String departType = request.getParameter("departType");
+		// 标识 相关类型id
+		String biaoshiid = request.getParameter("biaoshiid");
+		
 		Map<String, String> llbuweilistMap = new LinkedHashMap<String, String>();
 		Map<String, String> llbuweilistMap1 = new LinkedHashMap<String, String>();
-		List<ShuiwenxixxlilunView> swLilunlist = swllService.getAll(null,null,null,"all", 
-				0);
+		
+		//传入null值会报错，所以这里传一个-1
+		Integer a = biaoshiid == "" || biaoshiid == null ? -1 : Integer.valueOf(biaoshiid);
+		
+		List<ShuiwenxixxlilunView> swLilunlist = swllService.getAll(null,null,null,StringUtil.getQueryFieldNameByUserType(Integer.parseInt(departType)), 
+				a);
+		
 		for(ShuiwenxixxlilunView swxixxLilun:swLilunlist){
 			llbuweilistMap.put(swxixxLilun.getLlbuwei(), swxixxLilun.getLlbuwei());
 		}
@@ -371,8 +385,6 @@ public class AppInterfaceAction extends BaseAction {
 			}
 
 			Integer a = biaoshiid == "" || biaoshiid == null ? null : Integer.valueOf(biaoshiid);
-			// Integer b = xmb == "" || xmb == null ? null :
-			// Integer.valueOf(xmb);
 
 			List<SWWraningStatisticsEntity> list = new ArrayList<SWWraningStatisticsEntity>();
 
@@ -706,7 +718,9 @@ public class AppInterfaceAction extends BaseAction {
 			String shebeibianhao = request.getParameter("shebeibianhao");
 			String usePosition = request.getParameter("usePosition");
 
-			usePosition = new String(usePosition.getBytes("iso-8859-1"),"utf-8");
+			if(StringUtil.isNotEmpty(usePosition)){
+				usePosition = new String(usePosition.getBytes("iso-8859-1"),"utf-8");
+			}
 			
 			if (!StringUtil.isNotEmpty(startTime) && !StringUtil.isNotEmpty(endTime)) {
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -733,11 +747,11 @@ public class AppInterfaceAction extends BaseAction {
 			GenericPageMode mode = appSystemService.swcllist(shebeibianhao, startTime, endTime, null, null,
 					StringUtil.getQueryFieldNameByUserType(Integer.parseInt(departType)), b, pageNo,
 					maxPageItems, usePosition);
-
+			
 			List<ShuiwenxixxView> swxxList = mode.getDatas();
 			
 			List<SWDataQueryEntity> simplifylist = new ArrayList();
-
+			
 			for (ShuiwenxixxView sw : swxxList) {
 				SWDataQueryEntity sc = new SWDataQueryEntity();
 				sc.setBianhao(sw.getBianhao() + "");
@@ -764,6 +778,8 @@ public class AppInterfaceAction extends BaseAction {
 			SWChaobiaoItemEntity show = swapField(swisshow);
 			show.setZcl(swisshow.getGlchangliang());
 			show.setSjshui(swisshow.getSjshui());
+			show.setBzhName("1");
+			show.setUsePosition("1");
 			field.setZcl("总产量");
 			field.setSjshui(swziduanfield.getSjshui());
 			field.setBzhName("拌合站名称");
@@ -805,20 +821,22 @@ public class AppInterfaceAction extends BaseAction {
 		swHead.setChuliaoshijian(swxx.getShijian());
 		swHead.setZcl(swxx.getGlchangliang());
 		
+		ShuiwenziduancfgView swziduanfield = queryService.getSwfield(shebeibianhao);
 		try {
-			ShuiwenziduancfgView swziduanfield = queryService.getSwfield(shebeibianhao);
-	
-			ShaifenjieguoView sfjieguoView = appSystemService.getShaifenjieguoViewByswId(Integer.parseInt(bianhao));
-			
-			String sf_shebeibianhao = sfjieguoView.getGprsbianhao();
-			Shaifenziduancfg swsfsmslow = sysService.swjpsmslowfindBybh(sf_shebeibianhao);
-			Shaifenziduancfg swsfsmshigh = sysService.swjpsmshighfindBybh(sf_shebeibianhao);
-		
 			List<AppSWMaterialEntity> asw = bean2List1(swxx, swziduanfield, -1);
 			
-			returnJsonObj.put("swsfsmslow", swsfsmslow);
-			returnJsonObj.put("swsfsmshigh", swsfsmshigh);
-			returnJsonObj.put("sfjieguoView", sfjieguoView);
+			ShaifenjieguoView sfjieguoView = appSystemService.getShaifenjieguoViewByswId(Integer.parseInt(bianhao));
+			if(sfjieguoView != null){
+				
+				String sf_shebeibianhao = sfjieguoView.getGprsbianhao();
+				Shaifenziduancfg swsfsmslow = sysService.swjpsmslowfindBybh(sf_shebeibianhao);
+				Shaifenziduancfg swsfsmshigh = sysService.swjpsmshighfindBybh(sf_shebeibianhao);
+				
+				List<SWDataQueryChartEntity> swChartDataList = bean2List2(sfjieguoView, swsfsmslow, swsfsmshigh);
+				returnJsonObj.put("swChartDataList", swChartDataList);
+			}else{
+				returnJsonObj.put("swChartDataList", "[]");
+			}
 			
 			returnJsonObj.put("swHead", swHead);
 			returnJsonObj.put("data", asw);
@@ -1126,7 +1144,6 @@ public class AppInterfaceAction extends BaseAction {
 				}
 
 				if (null != input) {
-					int a = input.available();
 					// 保存文件的物理根地址
 					StringBuffer savepath = new StringBuffer(request.getSession().getServletContext().getRealPath("/"));
 					savepath.append("\\" + "hntChaobiaoAttachment");
@@ -1319,4 +1336,63 @@ public class AppInterfaceAction extends BaseAction {
 		return field;
 	}
 
+	// 获取指定实体类中的指定数据
+	public <T> List<SWDataQueryChartEntity> bean2List2(ShaifenjieguoView sfjieguoView, Shaifenziduancfg swsfsmslow, Shaifenziduancfg swsfsmshigh) {
+
+		List<SWDataQueryChartEntity> bciList = new ArrayList<SWDataQueryChartEntity>();
+
+		String[] cfgValue = { "0.075", "0.15", "0.3", "0.6", "1.18" , "2.36" , "4.75" , "9.5" , "13.2" 
+				, "16" , "19" , "26.5" , "31.5" , "37.5" , "53" };
+		
+		DecimalFormat df = new DecimalFormat("#0.00");
+		
+		try {
+			for (int i = 1; i <= cfgValue.length; i++) {
+				SWDataQueryChartEntity swm = new SWDataQueryChartEntity();
+					String show = (String) sfjieguoView.getClass().getMethod("getStandPassper" + i , new Class[] {}).invoke(sfjieguoView,
+							new Object[] {});
+				if (StringUtil.isNotEmpty(show)) {
+					String name = cfgValue[i-1];
+					String maxPassper = (String) sfjieguoView.getClass().getMethod("getMaxpassper" + i, new Class[] {}).invoke(sfjieguoView,
+							new Object[] {});
+					String minPassper = (String) sfjieguoView.getClass().getMethod("getMinpassper" + i, new Class[] {}).invoke(sfjieguoView,
+							new Object[] {});
+					String standPassper = (String) sfjieguoView.getClass().getMethod("getStandPassper" + i, new Class[] {}).invoke(sfjieguoView,
+							new Object[] {});
+					
+					String passper = (String) sfjieguoView.getClass().getMethod("getPassper" + i, new Class[] {}).invoke(sfjieguoView,
+							new Object[] {});
+					
+					String temp = (String) swsfsmshigh.getClass().getMethod("getPassper" + i, new Class[] {}).invoke(swsfsmshigh,
+							new Object[] {});
+					Double yjsx = Double.valueOf(standPassper)+Double.valueOf(temp);
+					
+					String temp1 = (String) swsfsmslow.getClass().getMethod("getPassper" + i, new Class[] {}).invoke(swsfsmslow,
+							new Object[] {});
+					Double yjxx = Double.valueOf(standPassper)+Double.valueOf(temp1);
+					
+					Double wucha = Double.valueOf(StringUtil.Null2Zero(passper))-Double.valueOf(StringUtil.Null2Zero(standPassper));
+					
+					String yjz = temp1+"~"+temp;
+					
+					swm.setYjz(yjz);
+					swm.setWcz(df.format(wucha));
+					swm.setName(name);
+					swm.setMaxPassper(maxPassper);
+					swm.setMinPassper(minPassper);
+					swm.setStandPassper(standPassper);
+					swm.setPassper(passper);
+					swm.setYjsx(df.format(yjsx));
+					swm.setYjxx(df.format(yjxx));
+	
+					bciList.add(swm);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return bciList;
+	}
+		
 }
