@@ -168,6 +168,7 @@ public class LimitUserAction extends ActionSupport{
 				}
 			}
 		}
+		System.out.println(listmap);
 		return SUCCESS;
 	}
 	

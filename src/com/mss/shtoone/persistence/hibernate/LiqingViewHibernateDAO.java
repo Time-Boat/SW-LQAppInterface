@@ -3883,6 +3883,161 @@ LiqingViewDAO {
 		
 	}
 	
+	public LiqingphbView appLqmateriallist(String startTime, String endTime, String shebeibianhao, 
+			Integer biaoduan, Integer xiangmubu, String fn, int bsid) {
+		LiqingphbView hv = null;
+		StringBuffer sql = new StringBuffer();
+		appendSql(sql);
+		sql.append(" FROM LiqingView");
+		sql.append(" where 1=1 ");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		String newDate = sdf.format(new Date());
+		
+		if (!fn.equalsIgnoreCase("all")) {
+			sql.append(" and "+fn+"=" + bsid);
+		}
+		if (StringUtil.Null2Blank(shebeibianhao).length()>0) {			
+			sql.append(" and shebeibianhao = '"+shebeibianhao+"' ");
+		}	
+		
+		if (null != biaoduan) {			
+			sql.append(" and biaoduanid ="+biaoduan);
+		}
+		
+		if (null != xiangmubu) {			
+			sql.append(" and xiangmubuid ="+xiangmubu);
+		}
+		if(StringUtil.Null2Blank(startTime).length()>0 && StringUtil.Null2Blank(endTime).length()>0)
+		{
+			sql.append(" and (baocunshijian between '"+startTime+"' and '"+endTime+"')");
+		}
+		if(StringUtil.Null2Blank(startTime).length()>0 && StringUtil.Null2Blank(endTime).length()==0)
+		{
+			sql.append(" and (baocunshijian between '"+startTime+"' and '"+newDate+"')");
+		}
+		if(StringUtil.Null2Blank(startTime).length()==0 && StringUtil.Null2Blank(endTime).length()>0)
+		{
+			sql.append(" and (baocunshijian between '1900-01-01' and '"+endTime+"')");
+		}
+		
+		
+		ResultSet rs = null;
+		Statement st = null;
+		Connection con = null;
+		String qsql = sql.toString();
+		try {
+			con = getTemplate().getSessionFactory().openSession().connection();
+			st = con.createStatement();			
+		
+			if (true) {
+				rs = st.executeQuery(qsql);
+				if (rs.next()) {
+					hv = new LiqingphbView();			
+					hv.setSjg1(String.format("%1$.1f",rs.getDouble("sjg1")/1000));
+					hv.setSjg2(String.format("%1$.1f",rs.getDouble("sjg2")/1000));
+					hv.setSjg3(String.format("%1$.1f",rs.getDouble("sjg3")/1000));
+					hv.setSjg4(String.format("%1$.1f",rs.getDouble("sjg4")/1000));
+					hv.setSjg5(String.format("%1$.1f",rs.getDouble("sjg5")/1000));
+					hv.setSjg6(String.format("%1$.1f",rs.getDouble("sjg6")/1000));
+					hv.setSjg7(String.format("%1$.1f",rs.getDouble("sjg7")/1000));
+					hv.setSjf1(String.format("%1$.1f",rs.getDouble("sjf1")/1000));
+					hv.setSjf2(String.format("%1$.1f",rs.getDouble("sjf2")/1000));
+					hv.setSjlq(String.format("%1$.1f",rs.getDouble("sjlq")/1000));
+					hv.setSjtjj(String.format("%1$.1f",rs.getDouble("sjtjj")/1000));					
+					hv.setChangliang(rs.getString("changliang"));
+					hv.setLlg1(String.format("%1$.1f",rs.getDouble("llg1")/1000));
+					hv.setLlg2(String.format("%1$.1f",rs.getDouble("llg2")/1000));
+					hv.setLlg3(String.format("%1$.1f",rs.getDouble("llg3")/1000));
+					hv.setLlg4(String.format("%1$.1f",rs.getDouble("llg4")/1000));
+					hv.setLlg5(String.format("%1$.1f",rs.getDouble("llg5")/1000));
+					hv.setLlg6(String.format("%1$.1f",rs.getDouble("llg6")/1000));
+					hv.setLlg7(String.format("%1$.1f",rs.getDouble("llg7")/1000));
+					hv.setLlf1(String.format("%1$.1f",rs.getDouble("llf1")/1000));
+					hv.setLlf2(String.format("%1$.1f",rs.getDouble("llf2")/1000));
+					hv.setLllq(String.format("%1$.1f",rs.getDouble("lllq")/1000));
+					hv.setLltjj(String.format("%1$.1f",rs.getDouble("lltjj")/1000));
+					
+					//偏差百分比
+					if(StringUtil.Null2Blank(rs.getString("llg1")).length()>0 && rs.getDouble("llg1")>0){
+						hv.setPersjg1(String.format("%1$.2f",(Double.parseDouble(hv.getSjg1())-Double.parseDouble(hv.getLlg1()))*100/Double.parseDouble(hv.getLlg1())));
+					}else{
+						hv.setPersjg1("0.00");
+					}
+					if(StringUtil.Null2Blank(rs.getString("llg2")).length()>0 && rs.getDouble("llg2")>0){
+						hv.setPersjg2(String.format("%1$.2f",(Double.parseDouble(hv.getSjg2())-Double.parseDouble(hv.getLlg2()))*100/Double.parseDouble(hv.getLlg2())));
+					}else{
+						hv.setPersjg2("0.00");
+					}
+					if(StringUtil.Null2Blank(rs.getString("llg3")).length()>0 && rs.getDouble("llg3")>0){
+						hv.setPersjg3(String.format("%1$.2f",(Double.parseDouble(hv.getSjg3())-Double.parseDouble(hv.getLlg3()))*100/Double.parseDouble(hv.getLlg3())));
+					}else{
+						hv.setPersjg3("0.00");
+					}
+					if(StringUtil.Null2Blank(rs.getString("llg4")).length()>0 && rs.getDouble("llg4")>0){
+						hv.setPersjg4(String.format("%1$.2f",(Double.parseDouble(hv.getSjg4())-Double.parseDouble(hv.getLlg4()))*100/Double.parseDouble(hv.getLlg4())));
+					}else{
+						hv.setPersjg4("0.00");
+					}
+					if(StringUtil.Null2Blank(rs.getString("llg5")).length()>0 && rs.getDouble("llg5")>0){
+						hv.setPersjg5(String.format("%1$.2f",(Double.parseDouble(hv.getSjg5())-Double.parseDouble(hv.getLlg5()))*100/Double.parseDouble(hv.getLlg5())));
+					}else{
+						hv.setPersjg5("0.00");
+					}
+					if(StringUtil.Null2Blank(rs.getString("llg6")).length()>0 && rs.getDouble("llg6")>0){
+						hv.setPersjg6(String.format("%1$.2f",(Double.parseDouble(hv.getSjg6())-Double.parseDouble(hv.getLlg6()))*100/Double.parseDouble(hv.getLlg6())));
+					}else{
+						hv.setPersjg6("0.00");
+					}
+					if(StringUtil.Null2Blank(rs.getString("llg7")).length()>0 && rs.getDouble("llg7")>0){
+						hv.setPersjg7(String.format("%1$.2f",(Double.parseDouble(hv.getSjg7())-Double.parseDouble(hv.getLlg7()))*100/Double.parseDouble(hv.getLlg7())));
+					}else{
+						hv.setPersjg7("0.00");
+					}
+					if(StringUtil.Null2Blank(rs.getString("llf1")).length()>0 && rs.getDouble("llf1")>0){
+						hv.setPersjf1(String.format("%1$.2f",(Double.parseDouble(hv.getSjf1())-Double.parseDouble(hv.getLlf1()))*100/Double.parseDouble(hv.getLlf1())));
+					}else{
+						hv.setPersjf1("0.00");
+					}
+					if(StringUtil.Null2Blank(rs.getString("llf2")).length()>0 && rs.getDouble("llf2")>0){
+						hv.setPersjf2(String.format("%1$.2f",(Double.parseDouble(hv.getSjf2())-Double.parseDouble(hv.getLlf2()))*100/Double.parseDouble(hv.getLlf2())));
+					}else{
+						hv.setPersjf2("0.00");
+					}
+					if(StringUtil.Null2Blank(rs.getString("lllq")).length()>0 && rs.getDouble("lllq")>0){
+						hv.setPersjlq(String.format("%1$.2f",(Double.parseDouble(hv.getSjlq())-Double.parseDouble(hv.getLllq()))*100/Double.parseDouble(hv.getLllq())));
+					}else{
+						hv.setPersjlq("0.00");
+					}
+					if(StringUtil.Null2Blank(rs.getString("lltjj")).length()>0 && rs.getDouble("lltjj")>0){
+						hv.setPersjtjj(String.format("%1$.2f",(Double.parseDouble(hv.getSjtjj())-Double.parseDouble(hv.getLltjj()))*100/Double.parseDouble(hv.getLltjj())));
+					}else{
+						hv.setPersjtjj("0.00");
+					}
+					hv.setShebeibianhao(rs.getString("shebeibianhao"));
+				}
+			}
+		} catch (SQLException e) {
+			logger.error(e.getMessage());
+		} finally {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+			}
+			try {				
+				st.close();
+			} catch (SQLException e1) {
+			}
+			try {
+				con.close();
+			} catch (SQLException e) {
+			}
+		}
+		
+		return hv;
+		
+	}
+	
+	
 	private void appenShuliangSql(StringBuffer sql) {		
 		sql.append("select banhezhanminchen,Max(chuliaoshijian) as chuliaoshijian,");
 		sql.append("SUM(CAST((CASE WHEN (changliang IS NULL) OR (changliang = '') ");

@@ -18,6 +18,7 @@ import com.mss.shtoone.domain.LiqingphbView;
 import com.mss.shtoone.domain.LiqingziduancfgView;
 import com.mss.shtoone.domain.ShuiwenxixxView;
 import com.mss.shtoone.persistence.LiqingViewDAO;
+import com.mss.shtoone.persistence.LiqingclDailyViewDAO;
 import com.mss.shtoone.persistence.SmsinfoDAO;
 import com.mss.shtoone.persistence.hibernate.GenericHibernateDAO;
 
@@ -34,6 +35,9 @@ public class AppLqServiceHibernateDAO {
 	
 	@Autowired
 	private LiqingViewDAO lqDAO;
+	
+	@Autowired
+	private LiqingclDailyViewDAO lqdailyviewDAO;
 	
 	public List<LiqingView> smstongji(String startTime, String endTime, Integer biaoduan, Integer xiangmubu,
 			String shebeibianhao, String fn, Integer bsid, Integer fzlx,int jbsj) {
@@ -56,9 +60,9 @@ public class AppLqServiceHibernateDAO {
 	}
 	
 	//沥青材料统计
-	public LiqingphbView lqmateriallist(String startTime,String endTime,String shebeibianhao, Integer biaoduan, 
+	public LiqingphbView appLqmateriallist(String startTime,String endTime,String shebeibianhao, Integer biaoduan, 
 			Integer xiangmubu, String fn, int bsid){
-		return lqDAO.lqmateriallist(startTime, endTime, shebeibianhao,biaoduan,xiangmubu,fn,bsid);
+		return lqDAO.appLqmateriallist(startTime, endTime, shebeibianhao,biaoduan,xiangmubu,fn,bsid);
 	}
 	
 	
@@ -67,5 +71,13 @@ public class AppLqServiceHibernateDAO {
 			String fn, int bsid, int offset, int pagesize, int queryalldata,String str) {
 		return lqDAO.lqviewlist(shebeibianhao,startTimeOne,endTimeOne,
 				biaoduan, xiangmubu, fn, bsid, offset, pagesize, queryalldata,str);
+	}
+	
+	//查询沥青日产量统计方法
+	public GenericPageMode limitdailylist(String shebeibianhao,String startTimeOne,
+			String endTimeOne,Integer biaoduan, Integer xiangmubu, 
+			String fn, int bsid, int offset, int pagesize) {
+		return lqdailyviewDAO.limitdailylist(shebeibianhao,startTimeOne,endTimeOne,
+				biaoduan, xiangmubu, fn, bsid, offset, pagesize);
 	}
 }

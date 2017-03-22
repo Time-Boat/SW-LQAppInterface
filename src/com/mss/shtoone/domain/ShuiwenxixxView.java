@@ -25,7 +25,7 @@ public class ShuiwenxixxView implements Serializable {
 	private String sjshui;
 	private String shijian;
 	private String shijianS;
-	private String  shijianE;
+	private String shijianE;
 	private String glchangliang;
 	private String llgl1;	
 	private String llgl2;

@@ -54,8 +54,6 @@ import com.mss.shtoone.util.JsonUtil;
 import com.mss.shtoone.util.StringUtil;
 import com.opensymphony.xwork2.ActionContext;
 
-import antlr.StringUtils;
-
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -1275,7 +1273,7 @@ public class AppInterfaceAction extends BaseAction {
 						new Object[] {});
 				String wucha = (String) t.getClass().getMethod("get" + "Manualw" + cfg[i], new Class[] {}).invoke(t,
 						new Object[] {});
-
+				
 				swm.setName(name);
 				swm.setYongliang(yongliang);
 				swm.setScpeibi(scpeibi);
@@ -1296,19 +1294,26 @@ public class AppInterfaceAction extends BaseAction {
 		List<AppSWMaterialEntity> bciList = new ArrayList<AppSWMaterialEntity>();
 
 		String[] cfg = { "fl1", "fl2", "gl1", "gl2", "gl3", "gl4", "gl5" };
+		String[] cfg1 = { "Llf1", "Llf2", "Llg1", "Llg2", "Llg3", "Llg4", "Llg5" };
 
 		for (int i = 0; i < cfg.length; i++) {
 			AppSWMaterialEntity swm = new AppSWMaterialEntity();
 			try {
-				String name = (String) hbfield.getClass().getMethod("get" + "Sj" + cfg[i], new Class[] {})
+				String name = (String) hbfield.getClass().getMethod("getSj" + cfg[i], new Class[] {})
 						.invoke(hbfield, new Object[] {});
-				String yongliang = (String) t.getClass().getMethod("get" + "Sj" + cfg[i], new Class[] {}).invoke(t,
+				String yongliang = (String) t.getClass().getMethod("getSj" + cfg[i], new Class[] {}).invoke(t,
 						new Object[] {});
-				String mbpeibi = (String) t.getClass().getMethod("get" + "Ll" + cfg[i], new Class[] {}).invoke(t,
+				String mbpeibi = (String) t.getClass().getMethod("getLl" + cfg[i], new Class[] {}).invoke(t,
 						new Object[] {});
-				String wucha = (String) t.getClass().getMethod("get" + "Persj" + cfg[i], new Class[] {}).invoke(t,
+				String wucha = (String) t.getClass().getMethod("getPersj" + cfg[i], new Class[] {}).invoke(t,
 						new Object[] {});
-
+				String scpeibi = (String) t.getClass().getMethod("get" + cfg1[i], new Class[] {}).invoke(t,
+						new Object[] {});
+				String sgpeibi = (String) t.getClass().getMethod("getLl" + cfg[i], new Class[] {}).invoke(t,
+						new Object[] {});
+				
+				swm.setScpeibi(scpeibi);
+				swm.setSgpeibi(sgpeibi);
 				swm.setName(name);
 				swm.setYongliang(yongliang);
 				swm.setMbpeibi(mbpeibi);

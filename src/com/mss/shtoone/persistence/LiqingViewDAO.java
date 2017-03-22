@@ -84,6 +84,9 @@ public interface LiqingViewDAO extends GenericDAO<LiqingView, Integer> {
 	
 	public GenericPageMode lqmanualphbviewwuchalist(String shebeibianhao,String startTimeOne,String endTimeOne,
 			Integer biaoduan, Integer xiangmubu,String fn, int bsid, int offset, int pagesize,String peifan);
+	
+	public LiqingphbView appLqmateriallist(String startTime,String endTime,String shebeibianhao, Integer biaoduan, 
+			Integer xiangmubu, String fn, int bsid);
 }
 
 

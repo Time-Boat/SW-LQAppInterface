@@ -171,6 +171,7 @@ public class QueryService {
 		lqInfo.setYonghu(lqxixx.getYonghu());
 		lqInfo.setPeifan(lqxixx.getPeifan());
 		lqInfo.setBiaoshi(lqxixx.getBiaoshi());
+		lqInfo.setBanhezhanminchen(lqxixx.getBanhezhanminchen());
 		try{
 			if(StringUtil.Null2Blank(lqxixx.getLqwd()).length()>0){
 				lqInfo.setLqwd(String.format("%1$.1f",Double.parseDouble(lqxixx.getLqwd())));
