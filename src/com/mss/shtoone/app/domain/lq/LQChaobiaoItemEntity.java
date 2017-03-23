@@ -20,7 +20,7 @@ public class LQChaobiaoItemEntity {
 	private String glwd;
 	private String lqwd;
 	private String clwd;
-	
+	private String sbbh;
 	private String shenhe;//审核
 	private String chuli;//处理结果
 	public String getBianhao() {
@@ -143,6 +143,12 @@ public class LQChaobiaoItemEntity {
 	}
 	public void setClwd(String clwd) {
 		this.clwd = clwd;
+	}
+	public String getSbbh() {
+		return sbbh;
+	}
+	public void setSbbh(String sbbh) {
+		this.sbbh = sbbh;
 	}
 	
 	

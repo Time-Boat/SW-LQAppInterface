@@ -80,4 +80,6 @@ public class AppLqServiceHibernateDAO {
 		return lqdailyviewDAO.limitdailylist(shebeibianhao,startTimeOne,endTimeOne,
 				biaoduan, xiangmubu, fn, bsid, offset, pagesize);
 	}
+	
+	
 }

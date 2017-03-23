@@ -20,6 +20,7 @@ public class LQgallclItemEntity {
 	private String glwd;
 	private String lqwd;
 	private String clwd;
+	private String sbbh;
 	public String getBianhao() {
 		return bianhao;
 	}
@@ -127,6 +128,12 @@ public class LQgallclItemEntity {
 	}
 	public void setClwd(String clwd) {
 		this.clwd = clwd;
+	}
+	public String getSbbh() {
+		return sbbh;
+	}
+	public void setSbbh(String sbbh) {
+		this.sbbh = sbbh;
 	}
 	
 }

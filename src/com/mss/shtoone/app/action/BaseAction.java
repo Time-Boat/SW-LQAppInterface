@@ -3,6 +3,8 @@ package com.mss.shtoone.app.action;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,52 +37,54 @@ public class BaseAction {
 //		binder.registerCustomEditor(Date.class, new DateConvertEditor());
 	}
 
-	/**
-	 * 分页公共方法(非easyui)
-	 * 
-	 * @author Alexander
-	 * @date 20131022
-	 */
-//	public List<?> pageBaseMethod(HttpServletRequest request,
-//			DetachedCriteria dc, CommonService commonService, int pageRow) {
-//		// 当前页
-//		// 总条数
-//		// 总页数
-//
-//		int currentPage = 1;
-//
-//		int totalRow = 0;
-//		int totalPage = 0;
-//		// 获取当前页
-//		String str_currentPage = request.getParameter("str_currentPage");
-//		currentPage = str_currentPage == null || "".equals(str_currentPage) ? 1
-//				: Integer.parseInt(str_currentPage);
-//		// 获取每页的条数
-//		String str_pageRow = request.getParameter("str_pageRow");
-//		pageRow = str_pageRow == null || "".equals(str_pageRow) ? pageRow
-//				: Integer.parseInt(str_pageRow);
-//
-//		// 统计的总行数
-//		dc.setProjection(Projections.rowCount());
-//
-//		totalRow = Integer.parseInt(commonService.findByDetached(dc).get(0)
-//				.toString());
-//		totalPage = (totalRow + pageRow - 1) / pageRow;
-//
-//		currentPage = currentPage < 1 ? 1 : currentPage;
-//		currentPage = currentPage > totalPage ? totalPage : currentPage;
-//		// 清空统计函数
-//		dc.setProjection(null);
-//		// dc.setResultTransformer(dc.DISTINCT_ROOT_ENTITY);
-//		List<?> list = commonService.pageList(dc, (currentPage - 1) * pageRow,
-//				pageRow);
-//
-//		request.setAttribute("currentPage", currentPage);
-//		request.setAttribute("pageRow", pageRow);
-//		request.setAttribute("totalRow", totalRow);
-//		request.setAttribute("totalPage", totalPage);
-//		return list;
-//	}
+	 /**
+     * 判断字符是否是中文
+     *
+     * @param c 字符
+     * @return 是否是中文
+     */
+    public static boolean isChinese(char c) {
+        Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
+        if (ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS
+                || ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
+                || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A
+                || ub == Character.UnicodeBlock.GENERAL_PUNCTUATION
+                || ub == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION
+                || ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS) {
+            return true;
+        }
+        return false;
+    }
+ 
+    /**
+     * 判断字符串是否是乱码
+     *
+     * @param strName 字符串
+     * @return 是否是乱码
+     */
+    public static boolean isMessyCode(String strName) {
+        Pattern p = Pattern.compile("\\s*|t*|r*|n*");
+        Matcher m = p.matcher(strName);
+        String after = m.replaceAll("");
+        String temp = after.replaceAll("\\p{P}", "");
+        char[] ch = temp.trim().toCharArray();
+        float chLength = ch.length;
+        float count = 0;
+        for (int i = 0; i < ch.length; i++) {
+            char c = ch[i];
+            if (!Character.isLetterOrDigit(c)) {
+                if (!isChinese(c)) {
+                    count = count + 1;
+                }
+            }
+        }
+        float result = count / chLength;
+        if (result > 0.4) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 	
 	public void responseDatagrid(HttpServletResponse response, JSONObject jObject) {
 		response.setContentType("application/json");

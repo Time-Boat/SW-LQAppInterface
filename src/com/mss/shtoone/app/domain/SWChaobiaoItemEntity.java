@@ -16,6 +16,14 @@ public class SWChaobiaoItemEntity {
 	private String sjshui;
 	private String usePosition;
 	
+	private String sbbh;
+	
+	public String getSbbh() {
+		return sbbh;
+	}
+	public void setSbbh(String sbbh) {
+		this.sbbh = sbbh;
+	}
 	public String getUsePosition() {
 		return usePosition;
 	}

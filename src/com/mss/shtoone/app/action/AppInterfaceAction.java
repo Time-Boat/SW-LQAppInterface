@@ -12,6 +12,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -92,8 +94,12 @@ public class AppInterfaceAction extends BaseAction {
 		JSONObject returnJsonObj = new JSONObject();
 		try {
 			String userName = request.getParameter("userName");// 用户名
-			userName = new String(userName.getBytes("iso-8859-1"), "utf-8"); // android
-																				// 中文用户名登录乱码
+			
+			
+			if(isMessyCode(userName)){
+				userName = new String(userName.getBytes("iso-8859-1"), "utf-8"); // android 中文用户名登录乱码
+			}
+			
 			String userPwd = request.getParameter("userPwd");// 密码
 			String OSType = request.getParameter("OSType");// 当前登录手机类型 1:手机短信
 															// 2:安卓3:苹果
@@ -765,7 +771,7 @@ public class AppInterfaceAction extends BaseAction {
 				sc.setZcl(sw.getGlchangliang());
 				sc.setSjshui(sw.getSjshui());
 				sc.setUsePosition(sw.getLlbuwei());
-				
+				sc.setSbbh(sw.getShebeibianhao());
 				simplifylist.add(sc);
 			}
 			
@@ -821,7 +827,7 @@ public class AppInterfaceAction extends BaseAction {
 		
 		ShuiwenziduancfgView swziduanfield = queryService.getSwfield(shebeibianhao);
 		try {
-			List<AppSWMaterialEntity> asw = bean2List1(swxx, swziduanfield, -1);
+			List<AppSWMaterialEntity> asw = bean2List1(swxx, swziduanfield, 1);
 			
 			ShaifenjieguoView sfjieguoView = appSystemService.getShaifenjieguoViewByswId(Integer.parseInt(bianhao));
 			if(sfjieguoView != null){
@@ -989,7 +995,8 @@ public class AppInterfaceAction extends BaseAction {
 			sc.setSjg4(sw.getSjgl4());
 			sc.setSjg5(sw.getSjgl5());
 			sc.setZcl(sw.getGlchangliang());
-
+			sc.setSbbh(sw.getShebeibianhao());
+			
 			String chuli = sw.getChulijieguo();
 
 			String shenhe = sw.getYezhuyijian();
@@ -1101,7 +1108,7 @@ public class AppInterfaceAction extends BaseAction {
 		String sql = "";
 		try {
 			request.setCharacterEncoding("UTF-8");
-
+			
 			String bianhaoStr = request.getParameter("jieguobianhao");// 数据编号
 			if (StringUtil.Null2Blank(bianhaoStr).length() > 0) {
 				String chaobiaoyuanyin = StringUtil.Null2Blank(request.getParameter("chaobiaoyuanyin"));// 超标原因
@@ -1111,26 +1118,33 @@ public class AppInterfaceAction extends BaseAction {
 				String chuzhishijian = GetDate
 						.TimetmpConvetDateTime(StringUtil.Null2Blank(request.getParameter("chuzhishijian")));// 处置时间
 
-				String isIos = request.getParameter("isIos");
+//				String isIos = request.getParameter("isIos");
 
 				// -----代码片段 spingMVC上传文件
 				MultiPartRequestWrapper mRequest = null;
 				File[] file = null;
 				mRequest = (MultiPartRequestWrapper) request;// request强制转换注意
 				file = mRequest.getFiles("file");
-				if ("1".equals(isIos)) {
-					// android和ios文件上传后，在后台接受方式不一样
-					// mRequest = (MultipartHttpServletRequest) request;//
-					// request强制转换注意
-					// file = mRequest.getFile("file");
-				} else {
-					// 解决android乱码问题
+//				if ("1".equals(isIos)) {
+//					// android和ios文件上传后，在后台接受方式不一样
+//					// mRequest = (MultipartHttpServletRequest) request;//
+//					// request强制转换注意
+//					// file = mRequest.getFile("file");
+//				} else {
+//					// 解决android乱码问题
+//					chaobiaoyuanyin = new String(chaobiaoyuanyin.getBytes("ISO-8859-1"), "utf-8");
+//					chuzhifangshi = new String(chuzhifangshi.getBytes("ISO-8859-1"), "utf-8");
+//					chuzhijieguo = new String(chuzhijieguo.getBytes("ISO-8859-1"), "utf-8");
+//					chuzhiren = new String(chuzhiren.getBytes("ISO-8859-1"), "utf-8");
+//				}
+
+				if(isMessyCode(chaobiaoyuanyin)||isMessyCode(chuzhifangshi)||isMessyCode(chuzhijieguo)||isMessyCode(chuzhiren)){
 					chaobiaoyuanyin = new String(chaobiaoyuanyin.getBytes("ISO-8859-1"), "utf-8");
 					chuzhifangshi = new String(chuzhifangshi.getBytes("ISO-8859-1"), "utf-8");
 					chuzhijieguo = new String(chuzhijieguo.getBytes("ISO-8859-1"), "utf-8");
 					chuzhiren = new String(chuzhiren.getBytes("ISO-8859-1"), "utf-8");
 				}
-
+				
 				if (StringUtil.Null2Blank(chuzhishijian).length() <= 0) {
 					chuzhishijian = GetDate.getNowTime("yyyy-MM-dd HH:MM:ss");
 				}
@@ -1216,14 +1230,18 @@ public class AppInterfaceAction extends BaseAction {
 				String confirmdate = GetDate
 						.TimetmpConvetDateTime(StringUtil.Null2Blank(request.getParameter("confirmdate")));// 确认日期
 				String shenpiren = StringUtil.Null2Blank(request.getParameter("shenpiren"));// 审批人
-				String shenpidate = GetDate
-						.TimetmpConvetDateTime(StringUtil.Null2Blank(request.getParameter("shenpidate")));// 审批日期
-				if (StringUtil.Null2Blank(shenpidate).length() <= 0) {
-					shenpidate = GetDate.getNowTime("yyyy-MM-dd HH:MM:ss");
+				
+				if (StringUtil.Null2Blank(confirmdate).length() <= 0) {
+					confirmdate = GetDate.getNowTime("yyyy-MM-dd HH:MM:ss");
 				}
-
-				yezhuyijian = new String(yezhuyijian.getBytes("ISO-8859-1"), "utf-8");
-				shenpiren = new String(shenpiren.getBytes("ISO-8859-1"), "utf-8");
+				
+				System.out.println("yezhuyijian:" +isMessyCode(yezhuyijian));
+				System.out.println("shenpiren:" +isMessyCode(shenpiren));
+				
+				if(isMessyCode(yezhuyijian)||isMessyCode(shenpiren)){
+					yezhuyijian = new String(yezhuyijian.getBytes("ISO-8859-1"), "utf-8");
+					shenpiren = new String(shenpiren.getBytes("ISO-8859-1"), "utf-8");
+				}
 
 				String sql = "update Shuiwenxixxjieguo set yezhuyijian='" + yezhuyijian + "'," + "confirmdate='"
 						+ confirmdate + "',yezhuren='" + shenpiren + "' where " + " swbianhao=" + bianhaoStr;
@@ -1307,10 +1325,14 @@ public class AppInterfaceAction extends BaseAction {
 						new Object[] {});
 				String wucha = (String) t.getClass().getMethod("getPersj" + cfg[i], new Class[] {}).invoke(t,
 						new Object[] {});
-				String scpeibi = (String) t.getClass().getMethod("get" + cfg1[i], new Class[] {}).invoke(t,
-						new Object[] {});
-				String sgpeibi = (String) t.getClass().getMethod("getLl" + cfg[i], new Class[] {}).invoke(t,
-						new Object[] {});
+				String scpeibi = "";
+				String sgpeibi = "";
+				if(objType == 1){
+					scpeibi = (String) t.getClass().getMethod("get" + cfg1[i], new Class[] {}).invoke(t,
+							new Object[] {});
+					sgpeibi = (String) t.getClass().getMethod("getLl" + cfg[i], new Class[] {}).invoke(t,
+							new Object[] {});
+				}
 				
 				swm.setScpeibi(scpeibi);
 				swm.setSgpeibi(sgpeibi);

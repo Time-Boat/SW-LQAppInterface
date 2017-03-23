@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -22,17 +23,20 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.dispatcher.multipart.MultiPartRequestWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.mss.shtoone.app.action.BaseAction;
 import com.mss.shtoone.app.domain.AppSWMaterialEntity;
 import com.mss.shtoone.app.domain.BhzInfoEntity;
 import com.mss.shtoone.app.domain.SWChaobiaoCZSHInfo;
 import com.mss.shtoone.app.domain.SWChaobiaoItemEntity;
+import com.mss.shtoone.app.domain.SWDataQueryChartEntity;
 import com.mss.shtoone.app.domain.SWWraningStatisticsEntity;
 import com.mss.shtoone.app.domain.SWXQHeadInfoEntity;
 import com.mss.shtoone.app.domain.lq.AppLQMaterialEntity;
 import com.mss.shtoone.app.domain.lq.LQChaobiaoCZSHInfo;
 import com.mss.shtoone.app.domain.lq.LQChaobiaoItemEntity;
+import com.mss.shtoone.app.domain.lq.LQDataQueryChartEntity;
 import com.mss.shtoone.app.domain.lq.LQWraningStatisticsEntity;
 import com.mss.shtoone.app.domain.lq.LQXQHeadInfoEntity;
 import com.mss.shtoone.app.domain.lq.LQdailylistItemEntity;
@@ -51,6 +55,9 @@ import com.mss.shtoone.domain.LiqingphbView;
 import com.mss.shtoone.domain.Liqingxixx;
 import com.mss.shtoone.domain.Liqingxixxjieguo;
 import com.mss.shtoone.domain.LiqingziduancfgView;
+import com.mss.shtoone.domain.LqshaifenjieguoView;
+import com.mss.shtoone.domain.ShaifenjieguoView;
+import com.mss.shtoone.domain.Shaifenziduancfg;
 import com.mss.shtoone.domain.ShuiwenmanualphbView;
 import com.mss.shtoone.domain.ShuiwenphbView;
 import com.mss.shtoone.domain.ShuiwenxixxView;
@@ -58,6 +65,7 @@ import com.mss.shtoone.domain.Shuiwenxixxjieguo;
 import com.mss.shtoone.domain.ShuiwenxixxlilunView;
 import com.mss.shtoone.domain.ShuiwenziduancfgView;
 import com.mss.shtoone.domain.Xiangmubuxinxi;
+import com.mss.shtoone.service.LqshaifenshiyanService;
 import com.mss.shtoone.service.QueryService;
 import com.mss.shtoone.service.SystemService;
 import com.mss.shtoone.util.GetDate;
@@ -79,6 +87,9 @@ public class AppLqInterfaceAction extends BaseAction{
 	
 	@Autowired
 	private SystemService sysService;
+	
+	@Autowired
+	private LqshaifenshiyanService shaifenService;
 	
 	@Action("lqWarningStatistics")
 	public void lqWarningStatistics(){
@@ -533,7 +544,7 @@ public class AppLqInterfaceAction extends BaseAction{
 			sc.setSjf2(sw.getSjf2());
 			
 			sc.setSjlq(sw.getSjlq());
-
+			sc.setSbbh(sw.getShebeibianhao());
 			String chuli = sw.getChulijieguo();
 
 			String shenhe = sw.getYezhuyijian();
@@ -876,7 +887,7 @@ public class AppLqInterfaceAction extends BaseAction{
 				sc.setSjf2(sw.getSjf2());
 				
 				sc.setSjlq(sw.getSjlq());
-
+				sc.setSbbh(sw.getShebeibianhao());
 				dataList.add(sc);
 			}
 			
@@ -951,8 +962,14 @@ public class AppLqInterfaceAction extends BaseAction{
 						// mRequest = (MultipartHttpServletRequest) request;//
 						// request强制转换注意
 						// file = mRequest.getFile("file");
-					} else {
+					} /*else {
 						// 解决android乱码问题
+						chaobiaoyuanyin = new String(chaobiaoyuanyin.getBytes("ISO-8859-1"), "utf-8");
+						chuzhifangshi = new String(chuzhifangshi.getBytes("ISO-8859-1"), "utf-8");
+						chuzhijieguo = new String(chuzhijieguo.getBytes("ISO-8859-1"), "utf-8");
+						chuzhiren = new String(chuzhiren.getBytes("ISO-8859-1"), "utf-8");
+					}*/
+					if(isMessyCode(chaobiaoyuanyin)||isMessyCode(chuzhifangshi)||isMessyCode(chuzhijieguo)||isMessyCode(chuzhiren)){
 						chaobiaoyuanyin = new String(chaobiaoyuanyin.getBytes("ISO-8859-1"), "utf-8");
 						chuzhifangshi = new String(chuzhifangshi.getBytes("ISO-8859-1"), "utf-8");
 						chuzhijieguo = new String(chuzhijieguo.getBytes("ISO-8859-1"), "utf-8");
@@ -1050,9 +1067,11 @@ public class AppLqInterfaceAction extends BaseAction{
 					if (StringUtil.Null2Blank(shenpidate).length() <= 0) {
 						shenpidate = GetDate.getNowTime("yyyy-MM-dd HH:MM:ss");
 					}
-
+					
+					if(isMessyCode(yezhuyijian)||isMessyCode(shenpiren)){
 					yezhuyijian = new String(yezhuyijian.getBytes("ISO-8859-1"), "utf-8");
 					shenpiren = new String(shenpiren.getBytes("ISO-8859-1"), "utf-8");
+					}
 					
 					String sql = "update Liqingxixxjieguo set yezhuyijian='"
 							+ yezhuyijian + "'," + "confirmdate='" + confirmdate
@@ -1080,7 +1099,7 @@ public class AppLqInterfaceAction extends BaseAction{
 		}
 		
 		
-		// 沥青历史查询详细
+		// 沥青历史数据查询详情页
 		@Action("liqingxixx")
 		public void liqingxixx() {
 	
@@ -1112,7 +1131,15 @@ public class AppLqInterfaceAction extends BaseAction{
 	
 			try {
 				List<AppLQMaterialEntity> alq = bean2List2(lq, lqziduanfield,bianhao, -1);
-	
+				
+				LqshaifenjieguoView sfjieguoView=shaifenService.getLqshaifenjieguoViewBylqId(Integer.parseInt(bianhao));
+				if(sfjieguoView!=null){
+					List<LQDataQueryChartEntity> lqChartDataList=bean2List3(sfjieguoView);
+					returnJsonObj.put("lqChartDataList", lqChartDataList);
+				}else{
+					returnJsonObj.put("lqChartDataList", "[]");
+				}
+				
 				returnJsonObj.put("lqHead", lqHead);
 				returnJsonObj.put("lqData", alq);
 				
@@ -1387,6 +1414,50 @@ public class AppLqInterfaceAction extends BaseAction{
 	
 			return bciList;
 		}
+		
+		// 获取指定实体类中的指定数据
+		public <T> List<LQDataQueryChartEntity> bean2List3(LqshaifenjieguoView sfjieguoView) {
+
+			List<LQDataQueryChartEntity> bciList = new ArrayList<LQDataQueryChartEntity>();
+
+			String[] cfgValue = { "0.075", "0.15", "0.3", "0.6", "1.18" , "2.36" , "4.75" , "9.5" , "13.2" 
+					, "16" , "19" , "26.5" , "31.5" , "37.5" , "53" };
+			String[] max ={"7","8","9","13","16","23","33","49","59","66","72","90","100","100","100"};
+			String[] min ={"3","4","5","7","10","15","25","39","49","57","63","82","90","100","100"};
+			DecimalFormat df = new DecimalFormat("#0.00");
+			
+			try {
+				for (int i = 1; i <= cfgValue.length; i++) {
+					LQDataQueryChartEntity swm = new LQDataQueryChartEntity();
+						
+						String name = cfgValue[i-1];
+						String maxPassper = max[i-1];
+						String minPassper = min[i-1];
+						String standPassper = (String) sfjieguoView.getClass().getMethod("getStandPassper" + i, new Class[] {}).invoke(sfjieguoView,
+								new Object[] {});
+						
+						String passper = (String) sfjieguoView.getClass().getMethod("getPassper" + i, new Class[] {}).invoke(sfjieguoView,
+								new Object[] {});
+						
+				
+						
+						
+						swm.setName(name);
+						swm.setMaxPassper(maxPassper);
+						swm.setMinPassper(minPassper);
+						swm.setStandPassper(standPassper);
+						swm.setPassper(passper);
+						
+					
+						bciList.add(swm);
+					}
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			return bciList;
+		}
 
 		//简化沥青历史查询字段
 		private LQgallclItemEntity lqapField4(LiqingziduancfgView lqisshow) {
@@ -1429,7 +1500,7 @@ public class AppLqInterfaceAction extends BaseAction{
 			field.setSjysb(lqziduanfield.getSjysb());
 	
 			field.setSjf2(lqziduanfield.getSjf2());
-	
+			field.setSbbh("设备编号");
 			field.setSjlq(lqziduanfield.getSjlq());
 			return field;
 		}
