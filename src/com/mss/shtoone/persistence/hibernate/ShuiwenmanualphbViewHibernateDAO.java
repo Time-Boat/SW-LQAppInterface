@@ -309,9 +309,9 @@ ShuiwenmanualphbViewDAO {
 		}
 		//超标处理类型
 		if(cllx==1){
-        	queryCondition +=" and  filepath is NULL  and ISNULL(chulijieguo,'')='' ";
+        	queryCondition +=" and ISNULL(filepath,'')='' and ISNULL(chulijieguo,'')='' ";
         }else if(cllx>=2){
-        	queryCondition +=" and (filepath is NOT NULL or  ISNULL(chulijieguo,'')<>'') ";
+        	queryCondition +=" and (ISNULL(filepath,'')<>'' or  ISNULL(chulijieguo,'')<>'') ";
         	if(cllx == 3){
     			queryCondition += " and  yezhuyijian is null ";
     		}else if(cllx==4){
