@@ -1050,7 +1050,6 @@ public class ShaifenshiyanAction extends ActionSupport{
 			setXxid(Integer.parseInt(request.getParameter("xxid")));
 		}
 		String xmlStr="";
-		try {
 		if(xxid!=null){
 			ShaifenjieguoView sfjieguoView=shaifenService.getShaifenjieguoViewByswId(xxid);
 			if(sfjieguoView!=null){
@@ -1067,12 +1066,13 @@ public class ShaifenshiyanAction extends ActionSupport{
 			}
 		}
 		PrintWriter out= null;
+		try {
 			response.setContentType("text/xml;charset=utf-8");  
 		    response.setHeader("Cache-Control", "no-cache");  
 			out = response.getWriter();
 			out.print(xmlStr);
 			out.close();
-		} catch (Exception e) {
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
