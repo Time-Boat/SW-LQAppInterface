@@ -1010,7 +1010,7 @@ public class AppInterfaceAction extends BaseAction {
 			sc.setSjg3(sw.getSjg3());
 			sc.setSjg4(sw.getSjg4());
 			sc.setSjg5(sw.getSjg5());
-			sc.setSjshui(sw.getAppSjShui());
+			
 			sc.setZcl(sw.getGlchangliang());
 			sc.setSbbh(sw.getShebeibianhao());
 			
@@ -1037,6 +1037,9 @@ public class AppInterfaceAction extends BaseAction {
 		SWChaobiaoItemEntity field = swapField(swziduanfield);
 		SWChaobiaoItemEntity show = swapField(swisshow);
 		show.setZcl(swisshow.getGlchangliang());
+		show.setBzhName("1");
+		show.setUsePosition("1");
+		
 		
 		field.setZcl("总产量");
 		field.setBianhao("编号");
@@ -1098,9 +1101,9 @@ public class AppInterfaceAction extends BaseAction {
 
 		ShuiwenziduancfgView swziduanfield = queryService.getSwfield(shebeibianhao);
 		// SWChaobiaoItemEntity field = swapField(swziduanfield);
-
+		
 		try {
-			List<AppSWMaterialEntity> asw = bean2List(sw, swziduanfield, -1);
+			List<AppSWMaterialEntity> asw = bean2List(sw, swziduanfield, swjg, -1);
 			returnJsonObj.put("swHead", swHead);
 			returnJsonObj.put("swData", asw);
 			returnJsonObj.put("swjg", simpleJg);
@@ -1290,13 +1293,15 @@ public class AppInterfaceAction extends BaseAction {
 	}
 
 	// 获取指定实体类中的指定数据
-	public <T> List<AppSWMaterialEntity> bean2List(T t, ShuiwenziduancfgView hbfield, int objType) {
+	public <T> List<AppSWMaterialEntity> bean2List(T t, ShuiwenziduancfgView hbfield, Shuiwenxixxjieguo swjg, int objType) {
 
 		List<AppSWMaterialEntity> bciList = new ArrayList<AppSWMaterialEntity>();
 
 		String[] cfg = { "fl1", "fl2", "gl1", "gl2", "gl3", "gl4", "gl5" };
-
+		
 		String[] cfg1 = { "Llf1", "Llf2", "Llg1", "Llg2", "Llg3", "Llg4", "Llg5" };
+
+		String[] cfg2 = { "getSjf1", "getSjf2", "getSjg1", "getSjg2", "getSjg3", "getSjg4", "getSjg5" };
 
 		for (int i = 0; i < cfg1.length; i++) {
 			AppSWMaterialEntity swm = new AppSWMaterialEntity();
@@ -1313,13 +1318,16 @@ public class AppInterfaceAction extends BaseAction {
 						new Object[] {});
 				String wucha = (String) t.getClass().getMethod("get" + "Manualw" + cfg[i], new Class[] {}).invoke(t,
 						new Object[] {});
-
+				String cblx = (String) swjg.getClass().getMethod(cfg2[i], new Class[] {}).invoke(swjg,
+						new Object[] {});
+				
 				swm.setName(name);
 				swm.setYongliang(yongliang);
 				swm.setScpeibi(scpeibi);
 				swm.setSgpeibi(sgpeibi);
 				swm.setMbpeibi(mbpeibi);
 				swm.setWucha(wucha);
+				swm.setCblx(cblx);
 
 				bciList.add(swm);
 			} catch (Exception e) {

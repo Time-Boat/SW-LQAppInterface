@@ -8,7 +8,14 @@ public class AppSWMaterialEntity {
 	private String sgpeibi;
 	private String mbpeibi;
 	private String wucha;
+	private String cblx;
 	
+	public String getCblx() {
+		return cblx;
+	}
+	public void setCblx(String cblx) {
+		this.cblx = cblx;
+	}
 	public String getName() {
 		return name;
 	}

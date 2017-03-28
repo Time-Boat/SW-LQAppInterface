@@ -252,15 +252,6 @@ public class ShuiwenmanualphbView implements Serializable {
 	
 	private String sjgl4and5;
 	
-	//app新增字段
-	private String appSjShui;
-	public String getAppSjShui() {
-		return appSjShui;
-	}
-	public void setAppSjShui(String appSjShui) {
-		this.appSjShui = appSjShui;
-	}
-
 	public String getSjgl4and5() {
 		return sjgl4and5;
 	}
