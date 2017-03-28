@@ -63,7 +63,7 @@ public class AppServiceHibernateDAO {
 
 	@Autowired
 	private ShaifenziduancfgDAO sfzdDAO;
-	
+
 	// 根据sql插入数据
 	public Integer updateBySql(String sql) throws Exception {
 		return appDAO.executeUpdate(sql);
@@ -144,6 +144,54 @@ public class AppServiceHibernateDAO {
 		return null;
 	}
 
+	public String getNameByType(String type, String fn, String id) {
+		if (StringUtil.isNotEmpty(type)) {
+			String queryString = " as model where model.id ='" + id + "'";
+			String tableName = getTableName(type, queryString, id);
+			return tableName;
+		}
+		return null;
+	}
+
+	public String getTableName(String type, String queryString, String id) {
+		StringBuffer fn = new StringBuffer("from ");
+		String tableName = "";
+		switch (Integer.parseInt(type)) {
+		case 1:
+		case 2:
+			fn.append(" Biaoduanxinxi ");
+			List<Biaoduanxinxi> bd = bdDAO.find(fn.append(queryString).toString());
+			if (bd != null && bd.size() > 0) {
+				tableName = bd.get(0).getBiaoduanminchen();
+			}
+			break;
+		case 3:
+			fn.append(" Xiangmubuxinxi ");
+			List<Xiangmubuxinxi> xmb = xmbDAO.find(fn.append(queryString).toString());
+			if (xmb != null && xmb.size() > 0) {
+				tableName = xmb.get(0).getXiangmubuminchen();
+			}
+			break;
+		case 4:
+		case 5:
+			fn.append(" Banhezhanxinxi ");
+			List<Banhezhanxinxi> bhz = bhzDAO.find(fn.append(queryString).toString());
+			if (bhz != null && bhz.size() > 0) {
+				tableName = bhz.get(0).getBanhezhanminchen();
+			}
+			break;
+		case 6:     //自定义一个
+			List<Banhezhanxinxi> bhz1 = bhzDAO.find("from Banhezhanxinxi as model where model.shebeibianhao = ' " + id + "'");
+			if (bhz1 != null && bhz1.size() > 0) {
+				tableName = bhz1.get(0).getBanhezhanminchen();
+			}
+			break;
+		default:
+			break;
+		}
+		return tableName;
+	}
+
 	// 水稳预警统计查询
 	public List<ShuiwenxixxView> swsmstongji(String startTime, String endTime, Integer biaoduan, Integer xiangmubu,
 			String shebeibianhao, String fn, Integer bsid, Integer fzlx) {
@@ -199,7 +247,6 @@ public class AppServiceHibernateDAO {
 		}
 	}
 
-	
 	// 沥青接口-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 	// 沥青预警统计查询
