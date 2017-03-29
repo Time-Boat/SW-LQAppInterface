@@ -6,6 +6,7 @@ public class AppLQMaterialEntity {
 	private String scpeibi;//实际生产配比
 	private String sgpeibi;//施工配比
 	private String mbpeibi;
+	private String cblx;
 
 	private String wucha;//误差
 	public String getName() {
@@ -44,6 +45,12 @@ public class AppLQMaterialEntity {
 	}
 	public void setMbpeibi(String mbpeibi) {
 		this.mbpeibi = mbpeibi;
+	}
+	public String getCblx() {
+		return cblx;
+	}
+	public void setCblx(String cblx) {
+		this.cblx = cblx;
 	}
 	
 }

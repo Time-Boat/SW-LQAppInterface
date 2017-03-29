@@ -790,7 +790,7 @@ public class AppInterfaceAction extends BaseAction {
 			show.setSjg3("0");
 			show.setSjg4("0");
 			show.setSjg5("0");
-			
+			show.setSjshui("0");
 			field.setZcl("总产量");
 			field.setSjshui(swziduanfield.getSjshui());
 			field.setBzhName("拌合站名称");

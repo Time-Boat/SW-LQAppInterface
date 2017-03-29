@@ -16,6 +16,7 @@ public class LQziduancfgItemEntity {
 	private String sjtjj;
 	private String sjlq;
 	private String sjysb;
+	private String bhzName;
 	public String getSjg1() {
 		return sjg1;
 	}
@@ -105,6 +106,12 @@ public class LQziduancfgItemEntity {
 	}
 	public void setSjysb(String sjysb) {
 		this.sjysb = sjysb;
+	}
+	public String getBhzName() {
+		return bhzName;
+	}
+	public void setBhzName(String bhzName) {
+		this.bhzName = bhzName;
 	}
 	
 }

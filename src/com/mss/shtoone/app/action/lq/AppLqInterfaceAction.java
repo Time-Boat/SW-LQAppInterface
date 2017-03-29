@@ -583,6 +583,7 @@ public class AppLqInterfaceAction extends BaseAction{
 		if(lqisshow2.getSjysb() == null || "0".equals(lqisshow2.getSjysb())){
 			lqisshow2.setSjysb("1");
 		}
+		lqisshow2.setBhzName("1");
 		
 		field.setBianhao("编号");
 		field.setBhzName("拌合站名称");
@@ -714,7 +715,7 @@ public class AppLqInterfaceAction extends BaseAction{
 			// SWChaobiaoItemEntity field = swapField(swziduanfield);
 
 			try {
-				List<AppLQMaterialEntity> alq = bean2List(lq, lqziduanfield, -1);
+				List<AppLQMaterialEntity> alq = bean2List(lq, lqziduanfield, lqjg, -1);
 				
 				
 				returnJsonObj.put("lqHead", lqHead);
@@ -782,8 +783,14 @@ public class AppLqInterfaceAction extends BaseAction{
 			List<AppLQMaterialEntity> alq = bean2List1(lqviews, lqziduanfield,lqisshow, -1);
 			
 			//LQziduancfgItem2Entity lqisshow2=lqapField3(lqisshow);
-
+			String tableName = "";
 			try {
+				if (StringUtil.isNotEmpty(shebeibianhao)) {
+					tableName = appSystemService.getNameByType("6", "id", shebeibianhao);
+				} else {
+					tableName = appSystemService.getNameByType(departType, StringUtil.getQueryFieldNameByUserType(a), b + "");
+				}
+				returnJsonObj.put("tableName", tableName);
 				returnJsonObj.put("data", alq);
 				//returnJsonObj.put("lqisshow", lqisshow2);
 				returnJsonObj.put("success", true);
@@ -907,6 +914,19 @@ public class AppLqInterfaceAction extends BaseAction{
 			if(lqisshow2.getSjysb() == null || "0".equals(lqisshow2.getSjysb())){
 				lqisshow2.setSjysb("1");
 			}
+			lqisshow2.setSjlq("1");
+			lqisshow2.setSjf1("0");
+			lqisshow2.setSjf2("0");
+			lqisshow2.setSjg1("0");
+			lqisshow2.setSjg2("0");
+			lqisshow2.setSjg3("0");
+			lqisshow2.setSjg4("0");
+			lqisshow2.setSjg5("0");
+			lqisshow2.setSjg6("0");
+			lqisshow2.setSjg7("0");
+			
+			
+			
 			
 			
 			field.setBianhao("编号");
@@ -1283,11 +1303,13 @@ public class AppLqInterfaceAction extends BaseAction{
 		}
 		
 		// 获取指定实体类中的指定数据
-		public <T> List<AppLQMaterialEntity> bean2List(T t, LiqingziduancfgView hbfield, int objType) {
+		public <T> List<AppLQMaterialEntity> bean2List(T t, LiqingziduancfgView hbfield,Liqingxixxjieguo lqjg, int objType) {
 
 			List<AppLQMaterialEntity> bciList = new ArrayList<AppLQMaterialEntity>();
 
 			String[] cfg = { "g1", "g2", "g3", "g4", "g5", "g6","g7" ,"f1","f2","lq","tjj","ysb"};
+			
+			String[] cfg2 = { "getSjg1", "getSjg2", "getSjg3", "getSjg4", "getSjg5", "getSjg6","getSjg7" ,"getSjf1","getSjf2","getSjlq","getSjtjj","getSjysb"};
 			
 			try {
 					for (int i = 0; i < cfg.length; i++) {
@@ -1310,6 +1332,8 @@ public class AppLqInterfaceAction extends BaseAction{
 							new Object[] {});
 					String wucha = (String) t.getClass().getMethod("get" + "Manualwsj" + cfg[i], new Class[] {}).invoke(t,
 							new Object[] {});
+					String cblx = (String) lqjg.getClass().getMethod(cfg2[i], new Class[] {}).invoke(lqjg,
+							new Object[] {});
 
 					lqm.setName(name);
 					lqm.setYongliang(yongliang);
@@ -1317,7 +1341,7 @@ public class AppLqInterfaceAction extends BaseAction{
 					lqm.setSgpeibi(sgpeibi);
 
 					lqm.setWucha(wucha);
-
+					lqm.setCblx(cblx);
 					bciList.add(lqm);
 					}
 					
