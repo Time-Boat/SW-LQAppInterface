@@ -778,7 +778,7 @@ public class AppInterfaceAction extends BaseAction {
 
 			SWChaobiaoItemEntity field = swapField(swziduanfield);
 			SWChaobiaoItemEntity show = swapField(swisshow);
-			
+
 			show.setZcl(swisshow.getGlchangliang());
 			show.setSjshui(swisshow.getSjshui());
 			show.setBzhName("1");
@@ -790,7 +790,7 @@ public class AppInterfaceAction extends BaseAction {
 			show.setSjg3("0");
 			show.setSjg4("0");
 			show.setSjg5("0");
-			show.setSjshui("0");
+
 			field.setZcl("总产量");
 			field.setSjshui(swziduanfield.getSjshui());
 			field.setBzhName("拌合站名称");
@@ -823,7 +823,7 @@ public class AppInterfaceAction extends BaseAction {
 		String bianhao = request.getParameter("bianhao");
 		String shebeibianhao = request.getParameter("shebeibianhao");
 
-		ShuiwenxixxView swxx = queryService.swxxfindById(Integer.parseInt(bianhao));
+		ShuiwenmanualphbView swxx = queryService.swmanualphbfindById(Integer.parseInt(bianhao));
 
 		// 头信息
 		SWXQHeadInfoEntity swHead = new SWXQHeadInfoEntity();
@@ -910,7 +910,8 @@ public class AppInterfaceAction extends BaseAction {
 			if (StringUtil.isNotEmpty(shebeibianhao)) {
 				tableName = appSystemService.getNameByType("6", "id", shebeibianhao);
 			} else {
-				tableName = appSystemService.getNameByType(departType, StringUtil.getQueryFieldNameByUserType(a), b + "");
+				tableName = appSystemService.getNameByType(departType, StringUtil.getQueryFieldNameByUserType(a),
+						b + "");
 			}
 
 			returnJsonObj.put("tableName", tableName);
@@ -992,7 +993,7 @@ public class AppInterfaceAction extends BaseAction {
 
 		GenericPageMode s = appSystemService.swchaobiaomanualviewlist(shebeibianhao, startTime, endTime, null, null,
 				StringUtil.getQueryFieldNameByUserType(Integer.parseInt(departType)), c, pageNo, maxPageItems, d,
-				swisshow, e, "");
+				swisshow, e, "chaoBiaoList");
 
 		List<ShuiwenmanualphbView> list = s.getDatas();
 
@@ -1010,10 +1011,10 @@ public class AppInterfaceAction extends BaseAction {
 			sc.setSjg3(sw.getSjg3());
 			sc.setSjg4(sw.getSjg4());
 			sc.setSjg5(sw.getSjg5());
-			
+
 			sc.setZcl(sw.getGlchangliang());
 			sc.setSbbh(sw.getShebeibianhao());
-			
+
 			String chuli = sw.getChulijieguo();
 
 			String shenhe = sw.getYezhuyijian();
@@ -1033,18 +1034,17 @@ public class AppInterfaceAction extends BaseAction {
 
 			simplifylist.add(sc);
 		}
-		
+
 		SWChaobiaoItemEntity field = swapField(swziduanfield);
 		SWChaobiaoItemEntity show = swapField(swisshow);
 		show.setZcl(swisshow.getGlchangliang());
 		show.setBzhName("1");
 		show.setUsePosition("1");
-		
-		
+
 		field.setZcl("总产量");
 		field.setBianhao("编号");
 		field.setBzhName("拌合站名称");
-		
+
 		try {
 			returnJsonObj.put("isShow", show);
 			returnJsonObj.put("field", field);
@@ -1101,7 +1101,7 @@ public class AppInterfaceAction extends BaseAction {
 
 		ShuiwenziduancfgView swziduanfield = queryService.getSwfield(shebeibianhao);
 		// SWChaobiaoItemEntity field = swapField(swziduanfield);
-		
+
 		try {
 			List<AppSWMaterialEntity> asw = bean2List(sw, swziduanfield, swjg, -1);
 			returnJsonObj.put("swHead", swHead);
@@ -1260,8 +1260,8 @@ public class AppInterfaceAction extends BaseAction {
 					confirmdate = GetDate.getNowTime("yyyy-MM-dd HH:MM:ss");
 				}
 
-				System.out.println("yezhuyijian:" + isMessyCode(yezhuyijian));
-				System.out.println("shenpiren:" + isMessyCode(shenpiren));
+//				System.out.println("yezhuyijian:" + isMessyCode(yezhuyijian));
+//				System.out.println("shenpiren:" + isMessyCode(shenpiren));
 
 				if (isMessyCode(yezhuyijian) || isMessyCode(shenpiren)) {
 					yezhuyijian = new String(yezhuyijian.getBytes("ISO-8859-1"), "utf-8");
@@ -1293,12 +1293,13 @@ public class AppInterfaceAction extends BaseAction {
 	}
 
 	// 获取指定实体类中的指定数据
-	public <T> List<AppSWMaterialEntity> bean2List(T t, ShuiwenziduancfgView hbfield, Shuiwenxixxjieguo swjg, int objType) {
+	public <T> List<AppSWMaterialEntity> bean2List(T t, ShuiwenziduancfgView hbfield, Shuiwenxixxjieguo swjg,
+			int objType) {
 
 		List<AppSWMaterialEntity> bciList = new ArrayList<AppSWMaterialEntity>();
 
 		String[] cfg = { "fl1", "fl2", "gl1", "gl2", "gl3", "gl4", "gl5" };
-		
+
 		String[] cfg1 = { "Llf1", "Llf2", "Llg1", "Llg2", "Llg3", "Llg4", "Llg5" };
 
 		String[] cfg2 = { "getSjf1", "getSjf2", "getSjg1", "getSjg2", "getSjg3", "getSjg4", "getSjg5" };
@@ -1318,9 +1319,8 @@ public class AppInterfaceAction extends BaseAction {
 						new Object[] {});
 				String wucha = (String) t.getClass().getMethod("get" + "Manualw" + cfg[i], new Class[] {}).invoke(t,
 						new Object[] {});
-				String cblx = (String) swjg.getClass().getMethod(cfg2[i], new Class[] {}).invoke(swjg,
-						new Object[] {});
-				
+				String cblx = (String) swjg.getClass().getMethod(cfg2[i], new Class[] {}).invoke(swjg, new Object[] {});
+
 				swm.setName(name);
 				swm.setYongliang(yongliang);
 				swm.setScpeibi(scpeibi);
@@ -1353,8 +1353,15 @@ public class AppInterfaceAction extends BaseAction {
 						new Object[] {});
 				String mbpeibi = (String) t.getClass().getMethod("getLl" + cfg[i], new Class[] {}).invoke(t,
 						new Object[] {});
-				String wucha = (String) t.getClass().getMethod("getPersj" + cfg[i], new Class[] {}).invoke(t,
-						new Object[] {});
+				String wucha = "0.00";
+
+				if (objType == 1) {
+					wucha = (String) t.getClass().getMethod("getManualw" + cfg[i], new Class[] {}).invoke(t,
+							new Object[] {});
+				} else {
+					wucha = (String) t.getClass().getMethod("getPersj" + cfg[i], new Class[] {}).invoke(t,
+							new Object[] {});
+				}
 				String scpeibi = "";
 				String sgpeibi = "";
 				if (objType == 1) {

@@ -313,16 +313,17 @@ ShuiwenmanualphbViewDAO {
         }else if(cllx>=2){
         	queryCondition +=" and (ISNULL(filepath,'')<>'' or  ISNULL(chulijieguo,'')<>'') ";
         	if(cllx == 3){
-    			queryCondition += " and  yezhuyijian is null ";
+    			queryCondition += " and  ISNULL(yezhuyijian,'')='' ";
     		}else if(cllx==4){
-    			queryCondition += " and  yezhuyijian is not null ";
+    			queryCondition += " and  (yezhuyijian is not null and yezhuyijian <> '') ";
     		}
         }
 		
 		//检索超标内容
-		if(StringUtil.Null2Blank(bianhao).length()>0){
+		if(StringUtil.Null2Blank(bianhao).length()>0 && !bianhao.equals("chaoBiaoList")){
 			queryCondition +=" and bianhao="+Integer.parseInt(bianhao);
 		}
+		
 		//超标级别
 		if(swisshow!=null){
 			StringBuilder tempCondition = new StringBuilder("1=2");
@@ -426,6 +427,7 @@ ShuiwenmanualphbViewDAO {
 				queryCondition+=" and ("+tempCondition.toString()+") ";
 			}
 		}
+		
 		ResultSet rs = null;
 		CallableStatement cs = null;
 		Connection con = null;
@@ -435,7 +437,20 @@ ShuiwenmanualphbViewDAO {
 			cs.setString(1, tablename);
 			cs.setString(2, "");
 			cs.setString(3, "bianhao");
-			cs.setString(4, "bianhao DESC");
+			
+			String fv = "bianhao DESC";
+			
+			//按处理类型来排序
+			if(StringUtil.Null2Blank(bianhao).length()>0 && bianhao.equals("chaoBiaoList")){
+				if(cllx == 2){
+					fv = " shenpidate desc ";
+				}
+	        	if(cllx == 4){
+	        		fv = " confirmdate desc ";
+	    		}
+			}
+			
+			cs.setString(4, fv);
 			cs.setInt(5, pagesize);
 			cs.setInt(6, offset);
 			cs.registerOutParameter(7, java.sql.Types.INTEGER);
@@ -746,7 +761,7 @@ ShuiwenmanualphbViewDAO {
 				pagemode.setPagetotal(cs.getInt(8));
 			}
 		} catch (SQLException e) {
-			logger.error(e.getMessage());
+			e.printStackTrace();
 		} finally {
 			DbJdbcUtil.closeAll(rs, cs, con);
 		}

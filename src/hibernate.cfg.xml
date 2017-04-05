@@ -4,7 +4,7 @@
 	<session-factory>
 		<property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>
 		<property name="hibernate.connection.driver_class">net.sourceforge.jtds.jdbc.Driver</property>
-		<property name="hibernate.connection.url">jdbc:jtds:sqlserver://127.0.0.1:1433;instance=MSSQLSERVER;DatabaseName=gdnhmss;tds=8.0;lastupdatecount=true</property>
+		<property name="hibernate.connection.url">jdbc:jtds:sqlserver://127.0.0.1:1433;DatabaseName=gdnhmss;tds=8.0;lastupdatecount=true</property>
 		<property name="hibernate.connection.username">sa</property>
 		<property name="hibernate.connection.password">123456</property>
 <!-- 		<property name="hibernate.hbm2ddl.auto">update</property> -->
@@ -116,10 +116,12 @@
 		<mapping class="com.mss.shtoone.domain.LqshaifenshiyanView"/>
 		<mapping class="com.mss.shtoone.domain.Lqshaifenjieguo"/>
 		<mapping class="com.mss.shtoone.domain.LqshaifenjieguoView"/>
-		<mapping class="com.mss.shtoone.domain.Shaifenziduancfg"/>
+		
 		
 		<!-- app接口 -->
+		<mapping class="com.mss.shtoone.domain.Shaifenziduancfg"/>
 		<mapping class="com.mss.shtoone.app.domain.AppLoginLogEntity"/>
+		
 		
 	</session-factory>
 </hibernate-configuration>

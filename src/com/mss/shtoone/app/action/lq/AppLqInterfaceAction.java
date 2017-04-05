@@ -512,7 +512,7 @@ public class AppLqInterfaceAction extends BaseAction{
 		GenericPageMode s = appLqHibernateDAO.lqchaobiaomanualviewlist(lqisshow,d,shebeibianhao, 
 				startTime, endTime,  null, null, 
 				StringUtil.getQueryFieldNameByUserType(Integer.parseInt(departType)), 
-				c, pageNo, maxPageItems,e, "");
+				c, pageNo, maxPageItems,e, "lqchaoBiaoList");
 				
 		/*GenericPageMode s = appSystemService.swchaobiaomanualviewlist(shebeibianhao, startTime, endTime, null, null,
 				StringUtil.getQueryFieldNameByUserType(Integer.parseInt(departType)), c, pageNo, maxPageItems, d,
@@ -528,22 +528,22 @@ public class AppLqInterfaceAction extends BaseAction{
 			sc.setBianhao(sw.getBianhao() + "");
 			sc.setBhzName(sw.getBanhezhanminchen());
 			sc.setClTime(sw.getShijian());
-			sc.setSjg1(sw.getSjg1());
-			sc.setSjg2(sw.getSjg2());
-			sc.setSjg3(sw.getSjg3());
-			sc.setSjg4(sw.getSjg4());
-			sc.setSjg5(sw.getSjg5());
-			sc.setSjg6(sw.getSjg6());
-			sc.setSjg7(sw.getSjg7());
-			sc.setSjysb(sw.getSjysb());
-			sc.setClwd(sw.getClwd());
-			sc.setGlwd(sw.getGlwd());
-			sc.setLqwd(sw.getLqwd());
-			sc.setSjtjj(sw.getSjtjj());
-			sc.setSjf1(sw.getSjf1());
-			sc.setSjf2(sw.getSjf2());
+			sc.setSjg1(sw.getCbsjg1());
+			sc.setSjg2(sw.getCbsjg2());
+			sc.setSjg3(sw.getCbsjg3());
+			sc.setSjg4(sw.getCbsjg4());
+			sc.setSjg5(sw.getCbsjg5());
+			sc.setSjg6(sw.getCbsjg6());
+			sc.setSjg7(sw.getCbsjg7());
+			sc.setSjysb(sw.getCbsjysb());
 			
-			sc.setSjlq(sw.getSjlq());
+			sc.setGlwd(sw.getCbglwd());
+			sc.setLqwd(sw.getCblqwd());
+			sc.setSjtjj(sw.getCbsjtjj());
+			sc.setSjf1(sw.getCbsjf1());
+			sc.setSjf2(sw.getCbsjf2());
+			
+			sc.setSjlq(sw.getCbsjlq());
 			sc.setSbbh(sw.getShebeibianhao());
 			String chuli = sw.getChulijieguo();
 
@@ -1082,11 +1082,11 @@ public class AppLqInterfaceAction extends BaseAction{
 					String confirmdate = GetDate
 							.TimetmpConvetDateTime(StringUtil.Null2Blank(request.getParameter("confirmdate")));// 确认日期
 					String shenpiren = StringUtil.Null2Blank(request.getParameter("shenpiren"));// 审批人
-					String shenpidate = GetDate
+					/*String shenpidate = GetDate
 							.TimetmpConvetDateTime(StringUtil.Null2Blank(request.getParameter("shenpidate")));// 审批日期
 					if (StringUtil.Null2Blank(shenpidate).length() <= 0) {
 						shenpidate = GetDate.getNowTime("yyyy-MM-dd HH:MM:ss");
-					}
+					}*/
 					
 					if(isMessyCode(yezhuyijian)||isMessyCode(shenpiren)){
 					yezhuyijian = new String(yezhuyijian.getBytes("ISO-8859-1"), "utf-8");
@@ -1095,7 +1095,7 @@ public class AppLqInterfaceAction extends BaseAction{
 					
 					String sql = "update Liqingxixxjieguo set yezhuyijian='"
 							+ yezhuyijian + "'," + "confirmdate='" + confirmdate
-							+ "',yezhuren='" + shenpiren + "' where " + " swbianhao=" + bianhaoStr;
+							+ "',yezhuren='" + shenpiren + "' where " + " lqbianhao=" + bianhaoStr;
 
 					System.out.println(sql);
 					int a = appSystemService.updateBySql(sql);

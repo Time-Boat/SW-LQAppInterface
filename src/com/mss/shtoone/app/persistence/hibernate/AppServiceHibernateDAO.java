@@ -181,7 +181,7 @@ public class AppServiceHibernateDAO {
 			}
 			break;
 		case 6:     //自定义一个
-			List<Banhezhanxinxi> bhz1 = bhzDAO.find("from Banhezhanxinxi as model where model.gprsbianhao = ' " + id + "'");
+			List<Banhezhanxinxi> bhz1 = bhzDAO.find("from Banhezhanxinxi as model where model.gprsbianhao = '" + id + "'");
 			if (bhz1 != null && bhz1.size() > 0) {
 				tableName = bhz1.get(0).getBanhezhanminchen();
 			}

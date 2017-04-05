@@ -2004,9 +2004,10 @@ LiqingViewDAO {
 				queryCondition += " and  yezhuyijian <> '' ";
 			}
 		}
-		// 检索超标内容
-		if (StringUtil.Null2Blank(bianhao).length() > 0) {
-			queryCondition +=" and bianhao=" + Integer.parseInt(bianhao);
+		//检索超标内容
+		if (StringUtil.Null2Blank(bianhao).length() > 0
+				&& !bianhao.equals("lqchaoBiaoList")) {
+			queryCondition += " and bianhao=" + Integer.parseInt(bianhao);
 		}
 		
 		
@@ -2217,7 +2218,18 @@ LiqingViewDAO {
 			cs.setString(1, tablename);
 			cs.setString(2, "");
 			cs.setString(3, "bianhao");
-			cs.setString(4, "bianhao DESC");
+			
+			String fv = "bianhao DESC";
+			//按处理类型来排序
+			if(StringUtil.Null2Blank(bianhao).length()>0 && bianhao.equals("lqchaoBiaoList")){
+				if(cllx == 2){
+					fv = " shenpidate desc ";
+				}
+	        	if(cllx == 4){
+	        		fv = " confirmdate desc ";
+	    		}
+			}
+			cs.setString(4, fv);
 			cs.setInt(5, pagesize);
 			cs.setInt(6, offset);
 			cs.registerOutParameter(7, java.sql.Types.INTEGER);
