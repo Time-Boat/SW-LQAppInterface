@@ -1211,10 +1211,11 @@ public class AppInterfaceAction extends BaseAction {
 					fos.close();
 					input.close();
 					sql = "update Shuiwenxixxjieguo set shenpidate='" + chuzhishijian + "',wentiyuanyin='"
-							+ chaobiaoyuanyin + "',chulifangshi='" + chuzhifangshi + "' " + ",chuliren='" + chuzhiren
+							+ chaobiaoyuanyin + "',chulifangshi='" + chuzhifangshi + "' " + ",jianliren='" + chuzhiren
 							+ "',filepath='" + sqlsavepath.toString() + "',chulijieguo='" + chuzhijieguo + "' where "
 							+ " swbianhao=" + bianhaoStr;
 				}
+				
 				System.out.println(sql);
 				int a = appSystemService.updateBySql(sql);
 				if (a >= 1) {
