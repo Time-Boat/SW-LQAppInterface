@@ -1999,7 +1999,7 @@ LiqingViewDAO {
 		} else if (cllx >= 2) {
 			queryCondition += " and (ISNULL(filepath,'') <> '' or ISNULL(chulijieguo,'')<>'') ";
 			if (cllx == 3) {
-				queryCondition += " and  yezhuyijian is null ";
+				queryCondition += " and  (yezhuyijian is null or yezhuyijian='') ";
 			} else if (cllx == 4) {
 				queryCondition += " and  yezhuyijian <> '' ";
 			}
