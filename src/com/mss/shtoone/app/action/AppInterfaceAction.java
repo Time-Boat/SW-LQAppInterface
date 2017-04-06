@@ -1123,8 +1123,6 @@ public class AppInterfaceAction extends BaseAction {
 		HttpServletRequest request = (HttpServletRequest) context.get(ServletActionContext.HTTP_REQUEST);
 		HttpServletResponse response = (HttpServletResponse) context.get(ServletActionContext.HTTP_RESPONSE);
 
-		StringBuffer str = new StringBuffer("aaa");
-
 		JsonUtil.responseUTF8(response);
 		JSONObject returnJsonObj = new JSONObject();
 		String sql = "";
@@ -1261,10 +1259,6 @@ public class AppInterfaceAction extends BaseAction {
 				if (StringUtil.Null2Blank(confirmdate).length() <= 0) {
 					confirmdate = GetDate.getNowTime("yyyy-MM-dd HH:MM:ss");
 				}
-
-				// System.out.println("yezhuyijian:" +
-				// isMessyCode(yezhuyijian));
-				// System.out.println("shenpiren:" + isMessyCode(shenpiren));
 
 				if (isMessyCode(yezhuyijian) || isMessyCode(shenpiren)) {
 					yezhuyijian = new String(yezhuyijian.getBytes("ISO-8859-1"), "utf-8");
