@@ -673,7 +673,7 @@ public class AppLqInterfaceAction extends BaseAction{
 					return field;
 				}
 		
-		// 沥青超标查询
+		// 沥青超标查询详情
 		@Action("lqchaoBiaoXQ")
 		public void lqchaoBiaoXQ() {
 
@@ -698,6 +698,9 @@ public class AppLqInterfaceAction extends BaseAction{
 			simpleJg.setChuliren(lqjg.getJianliren());
 			simpleJg.setShenpidate(lqjg.getShenpidate());
 			simpleJg.setWentiyuanyin(lqjg.getWentiyuanyin());
+			
+			simpleJg.setFilePath(lqjg.getFilepath());
+			
 			// 业主
 			simpleJg.setConfirmdate(lqjg.getConfirmdate());
 			simpleJg.setYezhuren(lqjg.getYezhuren());
@@ -1119,7 +1122,7 @@ public class AppLqInterfaceAction extends BaseAction{
 		}
 		
 		
-		// 沥青历史数据查询详情页
+		// 沥青历史数据查询页
 		@Action("liqingxixx")
 		public void liqingxixx() {
 	

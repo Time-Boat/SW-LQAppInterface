@@ -1123,6 +1123,8 @@ public class AppInterfaceAction extends BaseAction {
 		HttpServletRequest request = (HttpServletRequest) context.get(ServletActionContext.HTTP_REQUEST);
 		HttpServletResponse response = (HttpServletResponse) context.get(ServletActionContext.HTTP_RESPONSE);
 
+		StringBuffer str = new StringBuffer("aaa");
+
 		JsonUtil.responseUTF8(response);
 		JSONObject returnJsonObj = new JSONObject();
 		String sql = "";
@@ -1215,7 +1217,6 @@ public class AppInterfaceAction extends BaseAction {
 							+ "',filepath='" + sqlsavepath.toString() + "',chulijieguo='" + chuzhijieguo + "' where "
 							+ " swbianhao=" + bianhaoStr;
 				}
-				
 				System.out.println(sql);
 				int a = appSystemService.updateBySql(sql);
 				if (a >= 1) {
@@ -1261,8 +1262,9 @@ public class AppInterfaceAction extends BaseAction {
 					confirmdate = GetDate.getNowTime("yyyy-MM-dd HH:MM:ss");
 				}
 
-//				System.out.println("yezhuyijian:" + isMessyCode(yezhuyijian));
-//				System.out.println("shenpiren:" + isMessyCode(shenpiren));
+				// System.out.println("yezhuyijian:" +
+				// isMessyCode(yezhuyijian));
+				// System.out.println("shenpiren:" + isMessyCode(shenpiren));
 
 				if (isMessyCode(yezhuyijian) || isMessyCode(shenpiren)) {
 					yezhuyijian = new String(yezhuyijian.getBytes("ISO-8859-1"), "utf-8");
@@ -1461,5 +1463,4 @@ public class AppInterfaceAction extends BaseAction {
 
 		return bciList;
 	}
-
 }
